@@ -1,3 +1,5 @@
+Sửa lại Script để chạy trước tiên trên CIFAR10. Các thuật toán cần chạy bao gồm; FedAvg, FedProx, FedProto, FedBN, SCAFFOLD, FedCCFA, FedNoro, FedWHB, FedRoNa. Thử nghiệm lần lượt với 3 kịch bản A, B, C; Các mô hình CNN, LeNet, ResNet
+
 # 📐 TOÁN HỌC KHÔNG RÀO CẢN — Giáo trình dành cho Sinh viên CNTT
 
 > *"Toán học không phải là bức tường chắn, mà là cánh cửa mở ra thế giới công nghệ."*

@@ -8,7 +8,7 @@
 
 > 🧬 **HÀNH TRÌNH NEURON N-42** — Tập 3: "Nói bằng xác suất"
 >
-> *N-42 đã biết cách điều chỉnh weight bằng GD. Nhưng output của nó là một con số thô — ví dụ 3.7. Điều đó nghĩa là gì? "Chắc chắn là mèo" hay "có lẽ là mèo"? N-42 cần học cách nói bằng XÁC SUẤT: softmax biến 3.7 thành "97.3% là mèo". Và cross-entropy sẽ dạy nó tự chấm điểm xem mình sai đúng bao nhiêu.*
+> *N-42 đã biết cách điều chỉnh weight bằng GD. Nhưng output của nó là một con số thô — ví dụ 3.7. Điều đó nghĩa là gì? "Chắc chắn là mèo" hay "có lẽ là mèo"? N-42 cần học cách nói bằng XÁC SUẤT: thông qua hàm biến đổi tỷ lệ phần trăm (softmax), 3.7 sẽ được biến thành "97.3% là mèo". Và một hàm chấm điểm đo lường độ phân kì (cross-entropy) sẽ dạy nó tự đánh giá xem mình tự tin bao nhiêu và sai lệch như thế nào với thực tế.*
 
 ---
 
@@ -28,9 +28,110 @@ Nếu xác suất > 90% → vào thùng rác. Đó chính là **Định lý Baye
 
 ---
 
+## ⚡ 5-MINUTE REVIEW — Chương này bạn sẽ học gì?
+
+| # | Khái niệm | Một câu tóm tắt | Tại sao cần cho AI |
+|---|-----------|-----------------|---------------------|
+| 1 | **Xác suất cơ bản** | Mức độ tin tưởng (0 → 1) | Mọi output AI đều là xác suất |
+| 2 | **Phân phối** | "Hình dạng" của sự ngẫu nhiên | Hiểu dữ liệu, phát hiện anomaly |
+| 3 | **Kỳ vọng & Phương sai** | Trung bình & Độ phân tán | Đánh giá model, risk assessment |
+| 4 | **Covariance & Correlation** | Đo mối quan hệ giữa 2 biến | PCA, Feature selection |
+| 5 | **Định lý Bayes** | Cập nhật niềm tin từ dữ liệu | Spam filter, Chẩn đoán, NLP |
+| 6 | **Entropy & Cross-Entropy** | Đo lượng thông tin | Loss function #1 cho classification |
+| 7 | **Linear Regression** | Dự đoán giá trị liên tục | ML model #1 — Tổng hợp Ch.1-3 |
+
+> 📋 **Prerequisites:** Ch.1 §1-2 (Vector, Dot Product). Biết khái niệm phân số, tỷ lệ %.
+>
+> ⏱️ **Thời gian đọc:** ~50 phút (Track A — Developer) | ~80 phút (Track B — Researcher)
+
+---
+
+## 🗺️ BẠN ĐANG Ở ĐÂY
+
+```
+  Ch.0 ━━▶ Ch.1 ĐSTT ━━▶ Ch.2 Giải tích ━━▶ 📍 Ch.3 XÁC SUẤT TK ━━▶ Ch.4 Toán RR ━━▶ ...
+  (✅ Done)  (✅ Done)      (✅ Done)             BẠN ĐANG Ở ĐÂY       (Tiếp theo)
+```
+
+**Phần này cần học trước:** Ch.1 §1 (Vector cơ bản — để hiểu "vector xác suất"), Ch.2 §2 (GD — để hiểu tại sao Cross-Entropy là loss)
+**Chương này mở khóa:** Ch.5 (Softmax, Classification), Ch.7 (Hypothesis Testing, Confidence Interval)
+**Bạn sẽ cần lại kiến thức này khi:** Chọn loss function, đánh giá model, hiểu output Softmax, làm A/B testing, đọc paper ML.
+
+---
+
+## 📦 ÔN NHANH TOÁN PHỔ THÔNG
+
+> *Phần này dành cho bạn nào cảm thấy chưa vững nền tảng. Nếu bạn tự tin, hãy bỏ qua! Không xấu hổ khi ôn lại — giáo sư cũng phải tra công thức mỗi ngày.*
+
+<details>
+<summary>🎲 <b>Ôn nhanh 1: Phân số và Tỷ lệ — "Chia phần bánh"</b> (Bấm để mở)</summary>
+
+Phân số = "một phần của toàn bộ". Tỷ lệ % = phân số × 100.
+
+- 1/4 = 0.25 = 25% → "1 trong 4 phần"
+- 3/10 = 0.3 = 30% → "3 trong 10"
+
+**Cộng phân số:** $\frac{1}{4} + \frac{1}{4} = \frac{2}{4} = \frac{1}{2}$
+
+**Nhân phân số:** $\frac{1}{2} \times \frac{1}{3} = \frac{1}{6}$ → "Nửa của một phần ba"
+
+> 💡 Xác suất chính là "phân số sự kiện thuận lợi / tổng sự kiện". Bạn sẽ dùng ở **Phần 1**.
+
+</details>
+
+<details>
+<summary>📊 <b>Ôn nhanh 2: Trung bình cộng — "Con số đại diện"</b></summary>
+
+Trung bình = Tổng / Số phần tử:
+
+$$\bar{x} = \frac{x_1 + x_2 + \ldots + x_n}{n}$$
+
+Ví dụ: Điểm thi 5 bạn: 7, 8, 6, 9, 5 → Trung bình = (7+8+6+9+5)/5 = 7.0
+
+**Trung bình có trọng số** (giống phép nhân ma trận ở Ch.1!):
+
+$$\bar{x}_w = w_1 x_1 + w_2 x_2 + \ldots$$
+
+Ví dụ: Điểm TB = 0.4×Toán + 0.3×Lý + 0.3×Tin
+
+> 💡 **Kỳ vọng** ở Phần 2 chính là "trung bình có trọng số" — trọng số là xác suất!
+
+</details>
+
+<details>
+<summary>📏 <b>Ôn nhanh 3: Phép đếm — "Bao nhiêu cách?"</b></summary>
+
+**Quy tắc nhân:** Nếu bước 1 có $a$ cách, bước 2 có $b$ cách → Tổng: $a \times b$ cách.
+
+Ví dụ: 3 áo × 4 quần = 12 outfit khác nhau.
+
+**Quy tắc cộng:** Nếu chọn A HOẶC B (không đồng thời) → Tổng: $a + b$ cách.
+
+Ví dụ: Đi xe buýt (5 tuyến) HOẶC taxi (3 app) = 8 cách đi.
+
+> 💡 Bạn sẽ dùng quy tắc nhân ở **Phần 1** (biến cố độc lập: P(A ∩ B) = P(A) × P(B)).
+
+</details>
+
+---
+
+## 🏷️ HƯỚNG DẪN ĐỌC — Hệ thống 3 tầng
+
+Mỗi phần trong chương này được đánh dấu bằng **3 tầng** — bạn chọn mức phù hợp:
+
+| Tầng | Label | Dành cho ai? | Cần gì? |
+|------|-------|-------------|--------|
+| 🟢 | **Hiểu bằng trực giác** | Tất cả mọi người | Chỉ cần biết đọc tiếng Việt! |
+| 🟡 | **Hiểu bằng toán** | Muốn tính toán được | Cần biết cộng/trừ/nhân/chia |
+| 🔵 | **Hiểu bằng code & ứng dụng** | Developer / Researcher | Cần biết Python cơ bản |
+
+> 💡 **Mẹo:** Đọc tầng 🟢 trước cho MỌI phần. Nếu hiểu rồi, nhảy sang 🟡. Nếu vẫn OK, đọc 🔵. Bạn **KHÔNG CẦN** đọc hết cả 3 tầng mới được đi tiếp!
+
+---
+
 ## PHẦN 1: XÁC SUẤT CƠ BẢN — "MỨC ĐỘ TIN TƯỞNG"
 
-### 1.1 Xác suất là gì?
+### 🟢 1.1 Xác suất là gì?
 
 Xác suất là con số từ **0 đến 1** biểu thị **mức độ tin tưởng** vào một sự kiện:
 
@@ -53,9 +154,9 @@ Tưởng tượng bạn hỏi **100 vũ trụ song song** cùng một câu hỏi
 
 Xác suất 80% = trong 80 "thế giới" thì sự kiện xảy ra, trong 20 thế giới thì không.
 
-### 1.2 Quy tắc xác suất cơ bản
+### 🟡 1.2 Quy tắc xác suất cơ bản
 
-#### Quy tắc cộng — "Hoặc... Hoặc..."
+#### 🟡 Quy tắc cộng — "Hoặc... Hoặc..."
 
 $$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$
 
@@ -63,7 +164,7 @@ $$P(A \cup B) = P(A) + P(B) - P(A \cap B)$$
 
 (Trừ đi phần giao vì đã đếm 2 lần)
 
-#### Quy tắc nhân — "Và... Và..."
+#### 🟡 Quy tắc nhân — "Và... Và..."
 
 $$P(A \cap B) = P(A) \cdot P(B|A)$$
 
@@ -71,13 +172,29 @@ $$P(A \cap B) = P(A) \cdot P(B|A)$$
 
 > 💡 $P(B|A)$ đọc là "Xác suất B **khi biết** A đã xảy ra" — gọi là **xác suất có điều kiện**.
 
-#### Biến cố độc lập
+---
+
+> 🌱 **VÍ DỤ VỠ LÒNG — Tính xác suất bằng tay (30 giây)**
+>
+> Tung 1 xúc xắc. Xác suất ra số chẵn?
+>
+> - Tổng: 6 mặt {1, 2, 3, 4, 5, 6}
+> - Thuận lợi: 3 mặt chẵn {2, 4, 6}
+> - P(chẵn) = 3/6 = **1/2 = 50%**
+>
+> Thử thêm: Xác suất ra số > 4? Thuận lợi: {5, 6} → P = 2/6 = **1/3 ≈ 33%**
+
+---
+
+> ⚠️ **SAI LẦM PHỔ BIẾN:** Nhiều bạn nghĩ "xác suất 50% = chắc chắn xảy ra 1 trong 2 lần". SAI! P=50% nghĩa là **trung bình** trong nhiều lần thử, khoảng nửa số lần sẽ xảy ra. Tung xu 2 lần, hoàn toàn có thể ra 2 lần ngửa!
+
+#### 🟡 Biến cố độc lập
 
 Nếu A và B không ảnh hưởng nhau (tung 2 đồng xu khác nhau):
 
 $$P(A \cap B) = P(A) \cdot P(B)$$
 
-### 1.3 Code Python: Mô phỏng xác suất
+### 🔵 1.3 Code Python: Mô phỏng xác suất
 
 ```python
 import numpy as np
@@ -179,9 +296,27 @@ plt.show()
 
 ---
 
+> ✅ **CHECKPOINT 1 — Xác suất Cơ bản**
+>
+> 1. Tung 2 đồng xu. Xác suất cả 2 ngửa? (Gợi ý: 2 biến cố độc lập)
+> 2. Trong lớp 40 người, xác suất có 2 người trùng sinh nhật khoảng bao nhiêu? (A: ~20%, B: ~50%, C: ~89%)
+> 3. Tung xúc xắc, xác suất ra số chẵn HOẶC số > 4 bằng bao nhiêu?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. P(ngửa) × P(ngửa) = 1/2 × 1/2 = **1/4 = 25%** (biến cố độc lập → nhân)
+> 2. **C: ~89%!** Chỉ cần 23 người đã > 50%. 40 người thì gần chắc chắn trùng. Trực giác thường sai ở bài này!
+> 3. Chẵn = {2,4,6}, > 4 = {5,6}. Hợp = {2,4,5,6} = 4/6 = **2/3 ≈ 67%** (nhớ trừ giao: {6} đã đếm 2 lần)
+>
+> </details>
+>
+> **Tự đánh giá:** Đúng 3/3 → 🟢 Tuyệt! | 2/3 → 🟡 Ổn | 0-1/3 → 🔴 Đọc lại Phần 1
+
+---
+
 ## PHẦN 2: PHÂN PHỐI XÁC SUẤT — HÌNH DẠNG CỦA SỰ NGẪU NHIÊN
 
-### 2.1 Biến ngẫu nhiên
+### 🟢 2.1 Biến ngẫu nhiên
 
 **Biến ngẫu nhiên** ($X$) = Đại lượng có giá trị phụ thuộc vào yếu tố ngẫu nhiên.
 
@@ -189,7 +324,7 @@ Ví dụ:
 - $X$ = Số chấm khi tung xúc xắc → $X \in \{1, 2, 3, 4, 5, 6\}$ (rời rạc)
 - $X$ = Chiều cao sinh viên → $X \in [1.5m, 2.0m]$ (liên tục)
 
-### 2.2 Phân phối quan trọng nhất: Phân phối Chuẩn (Normal/Gaussian)
+### 🟡 2.2 Phân phối quan trọng nhất: Phân phối Chuẩn (Normal/Gaussian)
 
 $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\right)$$
 
@@ -213,7 +348,15 @@ $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\ri
 
 → Nếu server phản hồi > $200 + 3 \times 50 = 350$ms → Rất bất thường! Có thể đang bị tấn công DDoS.
 
-### 2.3 Kỳ vọng và Phương sai
+### 🟡 2.3 Kỳ vọng và Phương sai
+
+> 🌱 **VÍ DỤ VỠ LÒNG — Kỳ vọng bằng tay (30 giây)**
+>
+> Trò chơi: Tung xu, ngửa → thắng 10k, sấp → mất 5k. Chơi có lời không?
+>
+> $E = P(\text{ngửa}) \times 10 + P(\text{sấp}) \times (-5) = 0.5 \times 10 + 0.5 \times (-5) = 5 - 2.5 = \textbf{+2.5k}$
+>
+> → **Trung bình mỗi lần chơi bạn lời 2.5k!** Đây là cách casino tính toán — họ luôn thiết kế E < 0 cho người chơi.
 
 | Khái niệm | Ý nghĩa | Công thức |
 |-----------|---------|-----------|
@@ -228,7 +371,7 @@ $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\ri
 
 Cùng kỳ vọng 15 triệu, nhưng **phương sai** khác nhau hoàn toàn!
 
-### 2.4 Code Python: Khám phá các phân phối
+### 🔵 2.4 Code Python: Khám phá các phân phối
 
 ```python
 import numpy as np
@@ -332,9 +475,7 @@ for name, app, loai in data:
 
 ---
 
-## PHẦN 2B: COVARIANCE & CORRELATION — "ĐO MỐI QUAN HỆ"
-
-### 2B.1 Covariance — "Hai biến có đi cùng nhau?"
+### 🟡 2B.1 Covariance — "Hai biến có đi cùng nhau?"
 
 **Covariance** (hiệp phương sai) đo mức độ hai biến **thay đổi cùng nhau**:
 
@@ -346,7 +487,9 @@ $$Cov(X, Y) = E[(X - \mu_X)(Y - \mu_Y)] = \frac{1}{n-1} \sum_{i=1}^{n} (x_i - \b
 | **< 0** | X tăng → Y giảm | Giá dầu × CP hàng không ↑↓ |
 | **≈ 0** | Không liên quan | Số giày × Điểm Toán |
 
-### 2B.2 Correlation — Covariance đã "chuẩn hóa"
+> ⚠️ **SAI LẦM PHỔ BIẾN:** Correlation **KHÔNG** nghĩa là nhân quả! Kem bán chạy ↔ Số vụ đuối nước tăng → ρ > 0 nhưng kem **KHÔNG gây** đuối nước. Cả hai đều do mùa hè (yếu tố ẩn). Trong ML, đây gọi là **confounding variable**.
+
+### 🟡 2B.2 Correlation — Covariance đã "chuẩn hóa"
 
 $$\rho_{XY} = \frac{Cov(X,Y)}{\sigma_X \cdot \sigma_Y} \in [-1, 1]$$
 
@@ -364,7 +507,7 @@ $$\rho_{XY} = \frac{Cov(X,Y)}{\sigma_X \cdot \sigma_Y} \in [-1, 1]$$
 
 > 💡 **Quy tắc vàng:** Mua các cổ phiếu có $\rho < 0$ với nhau → Khi 1 cái lỗ, cái kia lãi → Giảm rủi ro tổng thể!
 
-### 2B.3 Ma trận Covariance — Cầu nối với PCA
+### 🟡 2B.3 Ma trận Covariance — Cầu nối với PCA
 
 Khi có nhiều biến, ta xây dựng **ma trận Covariance**:
 
@@ -372,7 +515,7 @@ $$C = \begin{pmatrix} Var(X_1) & Cov(X_1, X_2) & \cdots \\ Cov(X_2, X_1) & Var(X
 
 → **Eigenvector** của ma trận này chính là **Principal Components** (Chương 1 - PCA)!
 
-### 2B.4 Code Python: Covariance trong thực tế
+### 🔵 2B.4 Code Python: Covariance trong thực tế
 
 ```python
 import numpy as np
@@ -436,9 +579,29 @@ print("   Tài chính: Đa dạng hóa = chọn CP có corr âm với nhau")
 
 ---
 
+> ✅ **CHECKPOINT 2 — Phân phối, Kỳ vọng & Covariance**
+>
+> 1. Chiều cao nam Việt Nam tuân theo phân phối gì? Nêu ý nghĩa μ và σ.
+> 2. Tung xúc xắc, kỳ vọng E[X] = ? (Gợi ý: Trung bình có trọng số với P = 1/6 mỗi mặt)
+> 3. Nếu Cov(X, Y) < 0, X tăng thì Y sẽ... ?
+> 4. Tại sao "Kem bán chạy → đuối nước tăng" KHÔNG phải là nhân quả?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. **Phân phối Chuẩn (Normal)** với μ ≈ 168cm (trung bình), σ ≈ 6cm (độ phân tán). 68% nam cao 162-174cm.
+> 2. E[X] = (1+2+3+4+5+6)/6 = **3.5** — Tung xúc xắc rất nhiều lần, trung bình sẽ là 3.5!
+> 3. Y sẽ **giảm** (tương quan âm). Ví dụ: Giá dầu tăng → CP hàng không giảm.
+> 4. Cả hai đều do **mùa hè** (confounding variable). Correlation ≠ Causation!
+>
+> </details>
+>
+> **Tự đánh giá:** Đúng 4/4 → 🟢 Xuất sắc! | 2-3/4 → 🟡 Ổn | 0-1/4 → 🔴 Đọc lại Phần 2
+
+---
+
 ## PHẦN 3: ĐỊNH LÝ BAYES — VŨ KHÍ BÍ MẬT CỦA AI
 
-### 3.1 Xác suất có điều kiện
+### 🟢 3.1 Xác suất có điều kiện
 
 $P(A|B)$ = "Xác suất A xảy ra, **khi biết** B đã xảy ra"
 
@@ -446,7 +609,7 @@ Ví dụ: $P(\text{kẹt xe} | \text{trời mưa})$ = "Xác suất kẹt xe KHHI
 
 Rõ ràng: $P(\text{kẹt xe} | \text{trời mưa}) > P(\text{kẹt xe})$ → Trời mưa làm tăng xác suất kẹt xe.
 
-### 3.2 Định lý Bayes
+### 🟡 3.2 Định lý Bayes
 
 $$P(A|B) = \frac{P(B|A) \cdot P(A)}{P(B)}$$
 
@@ -475,6 +638,16 @@ $$P(\text{spam} | \text{"miễn phí"}) = \frac{0.8 \times 0.4}{0.38} = \frac{0.
 
 #### 🎯 Liên tưởng: Bác sĩ chẩn đoán bệnh
 
+> 🌱 **VÍ DỤ VỠ LÒNG — Tính Bayes bằng tay (30 giây)**
+>
+> Giả sử có 1000 email.
+> - Spam chiếm 40% → Có **400** email spam, **600** email thường.
+> - Trong spam, 80% chứa "miễn phí" → $400 \times 0.8 = \textbf{320}$ email spam có từ này.
+> - Trong email thường, 10% chứa "miễn phí" → $600 \times 0.1 = \textbf{60}$ email thường có từ này.
+>
+> Tổng số email chứa "miễn phí" = $320 + 60 = 380$.
+> Thấy từ "miễn phí", tỷ lệ spam là bao nhiêu? = $320 / 380 \approx \textbf{84.2\%}$!
+
 Xét nghiệm COVID cho kết quả dương tính. Bạn có chắc mắc bệnh?
 
 - Tỷ lệ nhiễm trong dân số: $P(\text{bệnh}) = 1\%$
@@ -487,7 +660,9 @@ $$P(\text{bệnh} | \text{dương}) = \frac{0.99 \times 0.01}{0.99 \times 0.01 +
 
 → Đây là lý do bác sĩ thường yêu cầu xét nghiệm lần 2.
 
-### 3.3 Code Python: Bộ lọc Spam Bayes
+> ⚠️ **SAI LẦM PHỔ BIẾN:** Bỏ qua Prior (Base Rate Fallacy). Khi thấy bộ lọc chỉ sai 5%, ta hay nghĩ "chắc chắn đúng 95%!". Nhưng nếu sự kiện quá hiếm (như bệnh hiếm gặp 1%), thì 5% sai kia sẽ tạo ra số lượng "dương tính giả" áp đảo số ca bệnh thật! Luôn phải xét đến **tần suất ban đầu** (Prior).
+
+### 🔵 3.3 Code Python: Bộ lọc Spam Bayes
 
 ```python
 import numpy as np
@@ -689,9 +864,27 @@ plt.show()
 
 ---
 
+> ✅ **CHECKPOINT 3 — Định lý Bayes & Spam Filter**
+>
+> 1. Trong công thức Bayes, "Prior" và "Posterior" khác nhau thế nào?
+> 2. P(mưa|mây đen) và P(mây đen|mưa) có bằng nhau không? Tại sao?
+> 3. Trong Naive Bayes cho Spam, từ "naive" ngụ ý giả định điều gì?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. **Prior** = Niềm tin ban đầu (chưa có bằng chứng mới). **Posterior** = Niềm tin MỚI (đã cập nhật sau khi thu thập bằng chứng).
+> 2. **Không bằng nhau!** Có mưa thì 100% có mây đen. Nhưng có mây đen thì chưa chắc đã mưa.
+> 3. Giả định các từ xuất hiện **độc lập** với nhau (VD: XS có từ "miễn" không ảnh hưởng XS có từ "phí"). Đây là giả định "ngây thơ" nhưng tính toán rất nhanh và hiệu quả.
+>
+> </details>
+>
+> **Tự đánh giá:** Đúng 3/3 → 🟢 Tốt quá! | 2/3 → 🟡 Ổn | 0-1/3 → 🔴 Đọc lại Phần 3
+
+---
+
 ## PHẦN 3B: INFORMATION THEORY — "ĐO LƯỢNG THÔNG TIN"
 
-### 3B.1 Entropy — "Mức độ bất ngờ"
+### 🟢 3B.1 Entropy — "Mức độ bất ngờ"
 
 **Entropy** đo lượng **thông tin** (hay mức độ bất định) của một phân phối:
 
@@ -704,7 +897,7 @@ $$H(X) = -\sum_{i} p(x_i) \log_2 p(x_i)$$
 
 > 💡 **Trong ML:** Entropy của output = mức độ "mụ mờ" của model. Muốn model tự tin → giảm entropy!
 
-### 3B.2 Cross-Entropy Loss — "Loss function #1 trong classification"
+### 🟡 3B.2 Cross-Entropy Loss — "Loss function #1 trong classification"
 
 $$H(p, q) = -\sum_{i} p(x_i) \log q(x_i)$$
 
@@ -718,7 +911,7 @@ Cross-Entropy nhỏ → Model dự đoán gần đúng. Đây là loss function 
 Dự báo nói 90% mưa, thực tế mưa → Cross-entropy thấp (dự đoán tốt).
 Dự báo nói 10% mưa, thực tế mưa → Cross-entropy cao (dự đoán tệ).
 
-### 3B.3 KL Divergence — "Đo khoảng cách giữa 2 phân phối"
+### 🟡 3B.3 KL Divergence — "Đo khoảng cách giữa 2 phân phối"
 
 $$D_{KL}(p \| q) = \sum_{i} p(x_i) \log \frac{p(x_i)}{q(x_i)} = H(p, q) - H(p)$$
 
@@ -732,7 +925,7 @@ $$D_{KL}(p \| q) = \sum_{i} p(x_i) \log \frac{p(x_i)}{q(x_i)} = H(p, q) - H(p)$$
 | **GAN** | Jensen-Shannon Divergence |
 | **Nén file** | Entropy = giới hạn nén tối thiểu |
 
-### 3B.4 Code Python: Information Theory
+### 🔵 3B.4 Code Python: Information Theory
 
 ```python
 import numpy as np
@@ -810,7 +1003,7 @@ plt.show()
 
 ## PHẦN 3C: LINEAR REGRESSION — "ML MODEL #1"
 
-### 3C.1 Bài toán hồi quy
+### 🟢 3C.1 Bài toán hồi quy
 
 Dự đoán giá trị **liên tục** từ dữ liệu:
 
@@ -825,7 +1018,7 @@ $$\hat{y} = w_1 x_1 + w_2 x_2 + \ldots + w_n x_n + b = \vec{w}^T \vec{x} + b$$
 
 $$\text{Giá nhà} = w_1 \cdot \text{Diện tích} + w_2 \cdot \text{Số phòng} + w_3 \cdot \text{Khoảng cách trung tâm} + b$$
 
-### 3C.2 Loss Function: MSE
+### 🟡 3C.2 Loss Function: MSE
 
 $$\mathcal{L} = \frac{1}{n} \sum_{i=1}^{n} (y_i - \hat{y}_i)^2$$
 
@@ -835,7 +1028,7 @@ $$\vec{w}^* = (X^T X)^{-1} X^T \vec{y}$$
 
 → Chương 1 (ma trận nghịch đảo) + Chương 2 (GD) hội tụ tại đây!
 
-### 3C.3 Code Python: Linear Regression từ đầu
+### 🔵 3C.3 Code Python: Linear Regression từ đầu
 
 ```python
 import numpy as np
@@ -912,9 +1105,25 @@ plt.show()
 
 ---
 
+> ✅ **CHECKPOINT 4 — Information Theory & Linear Regression**
+>
+> 1. Đồng xu nào có Entropy cao nhất? (Gian lận hay Công bằng)
+> 2. Target $y=[0, 1, 0]$. Model A đoán $q=[0.1, 0.8, 0.1]$, Model B đoán $q=[0.3, 0.4, 0.3]$. Model nào có Cross-Entropy Loss thấp hơn?
+> 3. Linear Regression tổng hợp những kiến thức nào từ Ch.1 và Ch.2?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. **Đồng xu công bằng!** Độ bất định lớn nhất (không đoán trước được). Đồng xu gian lận rất dễ đoán nên Entropy thấp.
+> 2. **Model A** có Cross-Entropy thấp hơn vì nó "tự tin" và đoán chính xác class đúng ($0.8 > 0.4$).
+> 3. Ma trận nghịch đảo / tích vô hướng (Ch.1) và Gradient Descent / Tối ưu Loss (Ch.2).
+>
+> </details>
+
+---
+
 ## PHẦN 4: PHÂN LOẠI DỮ LIỆU & XỬ LÝ NHIỄU
 
-### 4.1 Maximum Likelihood Estimation (MLE)
+### 🟡 4.1 Maximum Likelihood Estimation (MLE)
 
 Khi bạn có dữ liệu, bạn muốn tìm phân phối "khớp" nhất. MLE tìm tham số $\theta$ sao cho:
 
@@ -924,7 +1133,7 @@ $$\hat{\theta} = \arg\max_{\theta} \prod_{i=1}^{n} P(x_i | \theta)$$
 
 Bạn là thám tử có các manh mối (dữ liệu). MLE = *"Với các manh mối này, kịch bản nào **hợp lý nhất**?"*
 
-### 4.2 Xử lý nhiễu bằng Gaussian Filter
+### 🔵 4.2 Xử lý nhiễu bằng Gaussian Filter
 
 Trong thị giác máy tính, ảnh thường bị **nhiễu** (noise). Phân phối chuẩn (Gaussian) giúp "làm mờ" nhiễu:
 
@@ -1011,7 +1220,7 @@ print(f"   Cải thiện:          {(1 - mse_loc/mse_nhieu)*100:.1f}%")
 
 ---
 
-## PHẦN 5: 🎓 MINI PROJECT — Bộ lọc Spam hoàn chỉnh
+## PHẦN 5: 🔵 🎓 MINI PROJECT — Bộ lọc Spam hoàn chỉnh
 
 ### Đề bài
 
@@ -1112,6 +1321,22 @@ plt.tight_layout()
 plt.savefig('chuong3_confusion_matrix.png', dpi=150, bbox_inches='tight')
 plt.show()
 ```
+
+---
+
+> ✅ **CHECKPOINT 5 — Phân loại & Xử lý nhiễu**
+>
+> 1. Trong Maximum Likelihood Estimation (MLE), ta có dữ liệu trước hay có tham số mô hình trước?
+> 2. Tại sao lại dùng thuật toán phân phối Chuẩn (Gaussian) để xóa nhiễu trên ảnh?
+> 3. Trong Spam Filter, Accuracy cao có đủ để đánh giá mô hình không? Tại sao phải dùng thêm Precision và Recall?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. Ta **có dữ liệu trước**. Mục tiêu của MLE là tìm tham số phân phối sao cho khớp với dữ liệu đã quan sát được nhất.
+> 2. Vì nhiễu trong thế giới thực phần lớn tuân theo phân phối chuẩn (nhiễu ngẫu nhiên phân bố đều quanh giá trị thực). Gaussian filter sẽ tính trung bình có trọng số để "làm phẳng" phân phối đó.
+> 3. **Không đủ.** Chẳng hạn 99% email là bình thường, mô hình dự đoán mọi email đều là bình thường → Accuracy 99% nhưng bộ lọc hoàn toàn vô dụng! Cần Precision (báo spam có đúng không) & Recall (có sót thư spam không).
+>
+> </details>
 
 ---
 

@@ -18,9 +18,11 @@ Bạn có bao giờ tự hỏi: Khi bạn mở một bức ảnh trên điện t
 
 Bạn thấy khuôn mặt, bầu trời, hàng cây. Nhưng máy tính thì không. Với nó, bức ảnh chỉ là **một bảng số khổng lồ**. Mỗi pixel là một con số (hoặc bộ 3 số RGB). Bức ảnh 4000×3000 pixel chính là một **ma trận** có 12 triệu phần tử.
 
-Và khi Instagram áp filter "Clarendon" lên ảnh? Nó không phải "phép thuật" — nó là **phép nhân ma trận**. Mỗi filter là một ma trận biến đổi, nhân với ma trận ảnh gốc để tạo ra ảnh mới.
+Và khi Instagram áp filter (bộ lọc màu) mang tên "Clarendon" lên ảnh của bạn? Nhấp một cái, bạn sẽ thấy ảnh bỗng nhiên rực rỡ hơn ở trung tâm và tăng độ tương phản. Sự "thần kỳ" đó không phải là một thuật toán ma thuật phức tạp — đó chỉ là một **phép nhân ma trận**. 
 
-Đó chính là Đại số Tuyến tính — bộ môn toán học mà **mọi** phần mềm xử lý dữ liệu đều phải dùng.
+Thực chất, cái filter Clarendon nổi tiếng kia được lưu trong máy tính dưới dạng một ma trận con số đặc biệt. Khi bạn chọn áp dụng hiệu ứng, máy tính chỉ đơn giản là lấy "ma trận Clarendon" đó nhân với "ma trận ảnh gốc" để sinh ra một ma trận mới, chính là bức ảnh đã chỉnh sửa.
+
+Đó chính là Đại số Tuyến tính — bộ môn toán học nền tảng mà **mọi** phần mềm máy tính hiện đại đều phải dùng để xử lý dữ liệu.
 
 > 💡 **Takeaway:** Đại số tuyến tính = Ngôn ngữ mà máy tính dùng để "nhìn", "nghe", "hiểu" thế giới.
 
@@ -45,13 +47,107 @@ Và khi Instagram áp filter "Clarendon" lên ảnh? Nó không phải "phép th
 
 ---
 
+## 🗺️ BẠN ĐANG Ở ĐÂY
+
+```
+  Ch.0 Chẩn đoán ━━▶ 📍 Ch.1 ĐẠI SỐ TUYẾN TÍNH ━━▶ Ch.2 Giải tích ━━▶ Ch.3 XS-TK ━━▶ ...
+                        BẠN ĐANG Ở ĐÂY
+```
+
+**Chương này mở khóa:** Ch.2 (Gradient Descent), Ch.5 (Neural Network), Ch.6 (Jacobian/Hessian)
+**Bạn sẽ cần lại kiến thức này khi:** Viết layer đầu tiên trong PyTorch, làm PCA trên dữ liệu thực, hiểu Backpropagation.
+
+---
+
+## 📦 ÔN NHANH TOÁN PHỔ THÔNG
+
+> *Phần này dành cho bạn nào cảm thấy chưa vững nền tảng. Nếu bạn tự tin, hãy bỏ qua! Không xấu hổ khi ôn lại — giáo sư cũng phải tra công thức mỗi ngày.*
+
+<details>
+<summary>📐 <b>Ôn nhanh 1: Hệ tọa độ Oxy — "Bản đồ của Toán học"</b> (Bấm để mở)</summary>
+
+Hệ tọa độ Oxy là cách đánh dấu vị trí trên mặt phẳng bằng 2 số:
+
+```
+        y ↑
+        4 |         • B(2, 4)
+        3 |
+        2 |    • A(1, 2)
+        1 |
+   ─────0─┼──1──2──3──4──→ x
+       -1 |
+       -2 |    • C(1, -2)
+```
+
+- Điểm A(1, 2): đi sang phải 1, lên trên 2
+- Điểm C(1, -2): đi sang phải 1, xuống dưới 2
+- Gốc tọa độ O(0, 0): trung tâm
+
+**Khoảng cách giữa hai điểm** A(x₁, y₁) và B(x₂, y₂):
+
+$$d = \sqrt{(x_2 - x_1)^2 + (y_2 - y_1)^2}$$
+
+Ví dụ: Khoảng cách A(1,2) đến B(2,4) = √[(2-1)² + (4-2)²] = √[1 + 4] = √5 ≈ 2.24
+
+> 💡 Bạn sẽ dùng kiến thức này ở **Phần 1** (Vector) và **Phần 3** (Norm vector).
+
+</details>
+
+<details>
+<summary>📏 <b>Ôn nhanh 2: Định lý Pythagoras — "Quan hệ 3 cạnh tam giác vuông"</b></summary>
+
+Trong tam giác vuông: **cạnh huyền² = cạnh kề² + cạnh đối²**
+
+$$c^2 = a^2 + b^2$$
+
+Ví dụ: Tam giác vuông có 2 cạnh góc vuông = 3 và 4
+→ Cạnh huyền = √(3² + 4²) = √(9 + 16) = √25 = **5**
+
+> 💡 Đây chính là công thức tính **độ dài vector** (L2 Norm) mà bạn sẽ học ở Phần 3!
+> Vector [3, 4] có độ dài = √(3² + 4²) = 5. Pythagoras tái xuất!
+
+</details>
+
+<details>
+<summary>🔢 <b>Ôn nhanh 3: Phương trình và Hệ phương trình — "Tìm ẩn số"</b></summary>
+
+**Phương trình bậc nhất 1 ẩn:** ax + b = 0 → x = -b/a
+
+Ví dụ: 3x + 6 = 0 → x = -6/3 = **-2**
+
+**Hệ 2 phương trình 2 ẩn:**
+
+$$\begin{cases} 2x + y = 5 \\ x - y = 1 \end{cases}$$
+
+Cộng 2 vế: 3x = 6 → x = 2, y = 1.
+
+> 💡 Giải hệ phương trình bằng tay rất mệt khi có 100 ẩn! Ma trận giúp giải ngay bằng 1 dòng code: `x = np.linalg.solve(A, b)`. Bạn sẽ thấy ở **Phần 2B**.
+
+</details>
+
+---
+
+## 🏷️ HƯỚNG DẪN ĐỌC — Hệ thống 3 tầng
+
+Mỗi phần trong chương này được đánh dấu bằng **3 tầng** — bạn chọn mức phù hợp:
+
+| Tầng | Label | Dành cho ai? | Cần gì? |
+|------|-------|-------------|---------|
+| 🟢 | **Hiểu bằng trực giác** | Tất cả mọi người | Chỉ cần biết đọc tiếng Việt! |
+| 🟡 | **Hiểu bằng toán** | Muốn tính toán được | Cần biết cộng/trừ/nhân/chia |
+| 🔵 | **Hiểu bằng code & ứng dụng** | Developer / Researcher | Cần biết Python cơ bản |
+
+> 💡 **Mẹo:** Đọc tầng 🟢 trước cho MỌI phần. Nếu hiểu rồi, nhảy sang 🟡. Nếu vẫn OK, đọc 🔵. Bạn **KHÔNG CẦN** đọc hết cả 3 tầng mới được đi tiếp!
+
+---
+
 ## PHẦN 1: VECTOR — MŨI TÊN ĐỊNH HƯỚNG
 
-### 1.1 Vector KHÔNG phải là dãy số
+### 🟢 1.1 Vector KHÔNG phải là dãy số
 
 Khi nghe "vector", nhiều sinh viên nghĩ đến một dãy số khô khan: `[3, 5, 2]`. Nhưng thực tế, vector giàu ý nghĩa hơn nhiều.
 
-#### 🎯 Liên tưởng 1: Vector là mũi tên
+#### 🟢 🎯 Liên tưởng 1: Vector là mũi tên
 
 Hãy tưởng tượng bạn đứng giữa sân trường. Bạn bè hỏi đường đến thư viện. Bạn nói:
 
@@ -64,7 +160,7 @@ $$\vec{v} = \begin{pmatrix} 50 \\ 100 \end{pmatrix}$$
 - `50` là khoảng cách theo trục Đông-Tây (hướng phải)
 - `100` là khoảng cách theo trục Bắc-Nam (hướng lên)
 
-#### 🎯 Liên tưởng 2: Vector là "tọa độ tâm trạng"
+#### 🟢 🎯 Liên tưởng 2: Vector là "tọa độ tâm trạng"
 
 Giả sử bạn muốn mô tả tâm trạng của mình bằng số:
 
@@ -78,9 +174,9 @@ Bộ số `[8, 3, 7]` chính là **vector tâm trạng** của bạn trong khôn
 
 > 💡 **Nhận ra chưa?** Vector không nhất thiết sống trong không gian vật lý. Nó có thể sống trong **bất kỳ không gian nào** mà bạn định nghĩa: không gian màu sắc, không gian từ vựng, không gian sở thích phim...
 
-### 1.2 Các phép toán trên Vector
+### 🟡 1.2 Các phép toán trên Vector
 
-#### Cộng vector — "Ghép hai chỉ dẫn lại"
+#### 🟡 Cộng vector — "Ghép hai chỉ dẫn lại"
 
 Nếu bạn đi theo vector $\vec{a} = (3, 2)$ rồi tiếp tục đi theo vector $\vec{b} = (1, 4)$, thì tổng quãng đường bạn đi là:
 
@@ -88,17 +184,33 @@ $$\vec{a} + \vec{b} = (3+1, 2+4) = (4, 6)$$
 
 Giống như ghép hai chặng bay: Hà Nội → Đà Nẵng → TP.HCM = Hà Nội → TP.HCM.
 
-#### Nhân vô hướng — "Phóng to/thu nhỏ mũi tên"
+#### 🟡 Nhân vô hướng — "Phóng to/thu nhỏ mũi tên"
 
 $$2 \cdot \vec{a} = 2 \cdot (3, 2) = (6, 4)$$
 
 Vector cùng hướng nhưng dài gấp đôi. Như khi bạn zoom ảnh 200%.
 
-#### Tích vô hướng (Dot Product) — "Đo sự giống nhau"
+#### 🟡 Tích vô hướng (Dot Product) — "Đo sự giống nhau"
 
 $$\vec{a} \cdot \vec{b} = a_1 b_1 + a_2 b_2 + \ldots + a_n b_n$$
 
 Đây là phép toán **quan trọng bậc nhất** trong AI. Tại sao?
+
+---
+
+> 🌱 **VÍ DỤ VỠ LÒNG — Dot Product bằng tay (30 giây)**
+>
+> Cho $\vec{a} = [1, 2]$ và $\vec{b} = [3, 4]$:
+>
+> $$\vec{a} \cdot \vec{b} = 1 \times 3 + 2 \times 4 = 3 + 8 = 11$$
+>
+> Xong! Dot product chỉ là **nhân từng cặp rồi cộng lại**. Không có gì phức tạp cả.
+>
+> Thử thêm: $[1, 0] \cdot [0, 1] = 1 \times 0 + 0 \times 1 = 0$ → Hai vector vuông góc → Dot product = 0!
+
+---
+
+Bây giờ hãy xem dot product **giải quyết vấn đề thực tế** thế nào:
 
 Hãy tưởng tượng: Netflix biểu diễn sở thích phim của bạn bằng vector `[Hành_động, Tình_cảm, Kinh_dị]`:
 
@@ -112,7 +224,9 @@ Tích vô hướng:
 
 > Netflix sẽ gợi ý Phim A cho bạn. **Đó chính là Recommendation System.**
 
-### 1.3 Code Python: Khám phá Vector
+> ⚠️ **SAI LẦM PHỔ BIẾN:** Nhiều bạn nhầm dot product (tích vô hướng) với "nhân từng phần tử rồi để nguyên". Thực ra dot product **cộng tất cả lại thành MỘT SỐ** (scalar). Đó là lý do nó gọi là "vô hướng" — kết quả không có hướng, chỉ là 1 con số!
+
+### 🔵 1.3 Code Python: Khám phá Vector
 
 ```python
 import numpy as np
@@ -243,9 +357,31 @@ print("\n✅ Đã lưu hình minh họa: chuong1_vector_visualization.png")
 
 ---
 
+> ✅ **CHECKPOINT 1 — Vector & Dot Product**
+>
+> Trả lời nhanh (không cần code, chỉ cần suy nghĩ):
+>
+> 1. Vector [3, 5] và [5, 3] có **giống nhau** không? Tại sao?
+> 2. Tính tay: [2, 1, 0] · [0, 3, 5] = ?
+> 3. Nếu dot product của 2 vector sở thích phim = 0, điều đó có nghĩa gì?
+> 4. Vector [1, 1, 1] · [1, 1, 1] = ? Con số này có ý nghĩa gì?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. **KHÔNG** — Cùng các thành phần nhưng khác thứ tự → khác hướng (như "sang phải 3, lên 5" khác "sang phải 5, lên 3")
+> 2. 2×0 + 1×3 + 0×5 = 0 + 3 + 0 = **3**
+> 3. Hai người hoàn toàn **không có sở thích chung** (vuông góc trong không gian sở thích) → Netflix sẽ KHÔNG gợi ý phim của người này cho người kia
+> 4. 1 + 1 + 1 = **3** = Đây chính là ||v||² (bình phương độ dài vector). √3 ≈ 1.73 là độ dài vector. Dot product với chính mình = bình phương độ dài!
+>
+> </details>
+>
+> **Tự đánh giá:** Đúng 4/4 → 🟢 Tiến lên! | 2-3/4 → 🟡 Ổn, cần đọc lại phần dot product | 0-1/4 → 🔴 Quay lại §1.2 đọc chậm hơn
+
+---
+
 ## PHẦN 2: MA TRẬN — BẢNG SỐ BIẾN HÌNH
 
-### 2.1 Ma trận là gì?
+### 🟢 2.1 Ma trận là gì?
 
 Bạn đã dùng bảng tính Excel chưa? **Ma trận chính là bảng tính** — nhưng thay vì ghi tên nhân viên hay doanh thu, nó chứa các con số có ý nghĩa toán học.
 
@@ -253,7 +389,7 @@ $$A = \begin{pmatrix} 1 & 2 & 3 \\ 4 & 5 & 6 \\ 7 & 8 & 9 \end{pmatrix}$$
 
 Ma trận $A$ có 3 hàng, 3 cột → Ta gọi nó là ma trận **3×3**.
 
-#### 🎯 Liên tưởng: Ma trận là "Máy biến hình"
+#### 🟢 🎯 Liên tưởng: Ma trận là "Máy biến hình"
 
 Hãy nghĩ ma trận như một **cái máy**: bạn đưa vector vào, máy "xoay", "kéo giãn", "lật" nó, rồi trả ra vector mới.
 
@@ -267,7 +403,7 @@ $$R \cdot \vec{v} = \begin{pmatrix} 0 & -1 \\ 1 & 0 \end{pmatrix} \begin{pmatrix
 
 Kết quả: mũi tên bây giờ chỉ lên trên! Vector đã bị **xoay 90°**. Đó là "phép thuật" của phép nhân ma trận.
 
-### 2.2 Phép nhân Ma trận — Tại sao quan trọng?
+### 🟡 2.2 Phép nhân Ma trận — Tại sao quan trọng?
 
 Phép nhân ma trận **không phải** nhân từng phần tử tương ứng (nhiều sinh viên nhầm điểm này).
 
@@ -275,7 +411,19 @@ Công thức: Nếu $C = A \times B$ thì phần tử ở hàng $i$, cột $j$ c
 
 $$C_{ij} = \sum_{k} A_{ik} \cdot B_{kj}$$
 
-#### Liên tưởng thực tế: Bảng điểm sinh viên
+---
+
+> 🌱 **VÍ DỤ VỠ LÒNG — Nhân ma trận 2×2 bằng tay**
+>
+> $$\begin{pmatrix} 1 & 2 \\ 3 & 4 \end{pmatrix} \times \begin{pmatrix} 5 \\ 6 \end{pmatrix} = \begin{pmatrix} 1 \times 5 + 2 \times 6 \\ 3 \times 5 + 4 \times 6 \end{pmatrix} = \begin{pmatrix} 17 \\ 39 \end{pmatrix}$$
+>
+> **Quy tắc:** Hàng 1 của A nhân với cột B → phần tử đầu ra hàng 1. Hàng 2 của A nhân với cột B → phần tử đầu ra hàng 2.
+>
+> Để ý: Mỗi hàng của kết quả chính là một **dot product**! (Bạn vừa học ở Phần 1!)
+
+---
+
+#### 🟡 Liên tưởng thực tế: Bảng điểm sinh viên
 
 Giả sử bạn có **điểm thi** (ma trận A) và **trọng số môn học** (ma trận B):
 
@@ -299,6 +447,8 @@ $$A \times B = \begin{pmatrix} 8 & 7 & 9 \\ 6 & 9 & 7 \\ 9 & 6 & 8 \end{pmatrix}
 
 → An: 8.0 điểm TB, Bình: 7.2, Chi: 7.8. **Phép nhân ma trận** cho ta ngay bảng điểm trung bình có trọng số!
 
+> ⚠️ **SAI LẦM PHỔ BIẾN:** Trong Python, `A * B` là **nhân từng phần tử** (element-wise), KHÔNG phải nhân ma trận! Phép nhân ma trận dùng `A @ B` hoặc `np.dot(A, B)`. Nhầm 2 cái này là lỗi #1 của người mới học NumPy!
+
 ### 2.3 Ma trận chuyển vị (Transpose)
 
 "Lật" ma trận: hàng thành cột, cột thành hàng.
@@ -307,7 +457,7 @@ $$A = \begin{pmatrix} 1 & 2 \\ 3 & 4 \\ 5 & 6 \end{pmatrix} \quad \Rightarrow \q
 
 Hình dung: bạn cầm tờ giấy ghi bảng, rồi nghiêng 90° — hàng trở thành cột.
 
-### 2.4 Code Python: Ma trận trong thực tế
+### 🔵 2.4 Code Python: Ma trận trong thực tế
 
 ```python
 import numpy as np
@@ -406,17 +556,27 @@ print("\n✅ Đã lưu hình minh họa: chuong1_ma_tran_bien_hinh.png")
 
 ## PHẦN 2B: ĐỊNH THỨC & MA TRẬN NGHỊCH ĐẢO — "UNDO PHÉP BIẾN HÌNH"
 
-### 2B.1 Định thức (Determinant) — "Hệ số co giãn diện tích"
+### 🟢 2B.1 Định thức (Determinant) — "Hệ số co giãn diện tích"
 
 Chúng ta đã biết ma trận là "máy biến hình". **Định thức** cho biết máy đó **phóng to hay thu nhỏ diện tích** bao nhiêu lần.
 
 $$\det(A) = |A|$$
 
+### 🟡 Công thức định thức
+
 Với ma trận 2×2:
 
 $$\det\begin{pmatrix} a & b \\ c & d \end{pmatrix} = ad - bc$$
 
-#### 🎯 Liên tưởng: Kéo giãn miếng bột pizza
+> 🌱 **VÍ DỤ VỠ LÒNG — Tính định thức bằng tay (10 giây)**
+>
+> $$\det\begin{pmatrix} 3 & 1 \\ 2 & 4 \end{pmatrix} = 3 \times 4 - 1 \times 2 = 12 - 2 = 10$$
+>
+> Nghĩa là: Ma trận này **phóng to diện tích gấp 10 lần**.
+>
+> Thử thêm: $\det\begin{pmatrix} 2 & 4 \\ 1 & 2 \end{pmatrix} = 2 \times 2 - 4 \times 1 = 0$ → Định thức = 0! Ma trận này **ép mọi thứ thành đường thẳng**, không thể undo!
+
+#### 🟢 🎯 Liên tưởng: Kéo giãn miếng bột pizza
 
 Bạn có miếng bột pizza hình vuông 1×1. Khi "nhào" nó qua ma trận $A$:
 - $\det(A) = 2$: Miếng bột giãn ra gấp đôi diện tích
@@ -692,9 +852,29 @@ plt.show()
 
 ---
 
+> ✅ **CHECKPOINT 2 — Ma trận & Định thức**
+>
+> 1. Ma trận 2×3 nhân với ma trận 3×1 được không? Kết quả có kích thước bao nhiêu?
+> 2. Tính tay: $\det\begin{pmatrix} 5 & 3 \\ 2 & 4 \end{pmatrix}$ = ?
+> 3. Nếu det(A) = 0, ma trận A có nghịch đảo không? Tại sao?
+> 4. Trong Python, `A * B` và `A @ B` khác nhau thế nào?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. **ĐƯỢC!** (2×3) × (3×1) = **(2×1)**. Số cột A = số hàng B → nhân được.
+> 2. 5×4 - 3×2 = 20 - 6 = **14** → Ma trận phóng to diện tích 14 lần
+> 3. **KHÔNG** — det=0 nghĩa là ma trận "ép dẹp" không gian, mất thông tin, không thể undo
+> 4. `A * B` = nhân **từng phần tử** (element-wise). `A @ B` = **nhân ma trận** (matrix multiplication). Nhầm lẫn 2 cái này là lỗi #1 của người mới!
+>
+> </details>
+>
+> **Tự đánh giá:** Đúng 4/4 → 🟢 Xuất sắc! | 2-3/4 → 🟡 Ổn | 0-1/4 → 🔴 Đọc lại Phần 2
+
+---
+
 ## PHẦN 3: KHÔNG GIAN VECTOR & CƠ SỞ
 
-### 3.1 Không gian Vector — "Vũ trụ" mà vector sống
+### 🟢 3.1 Không gian Vector — "Vũ trụ" mà vector sống
 
 Hãy tưởng tượng: Tất cả những vector 2D mà bạn có thể vẽ trên mặt phẳng tạo thành một "vũ trụ" — đó là **không gian vector** $\mathbb{R}^2$.
 
@@ -888,9 +1068,25 @@ print("   L2 (tròn): weight phân bố đều → smooth!")
 
 ---
 
+> ✅ **CHECKPOINT 3 — Không gian Vector & Norm**
+>
+> 1. Vector [3, 4] có độ dài (L2 norm) bằng bao nhiêu? (Gợi ý: Pythagoras!)
+> 2. L1 norm của [3, -4, 1] = ?
+> 3. Trong ML, L1 regularization tạo weight **sparse** (nhiều = 0). Tại sao điều đó hữu ích?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. √(3² + 4²) = √(9+16) = √25 = **5** (Tam giác 3-4-5 kinh điển!)
+> 2. |3| + |-4| + |1| = 3 + 4 + 1 = **8**
+> 3. Sparse weight = nhiều feature bị "tắt" (weight=0) → Tự động **chọn feature quan trọng** (feature selection). Ví dụ: Trong 1000 gen, chỉ 50 gen ảnh hưởng bệnh → L1 tìm ra 50 gen đó!
+>
+> </details>
+
+---
+
 ## PHẦN 4: GIÁ TRỊ RIÊNG & VECTOR RIÊNG — "LINH HỒN" CỦA MA TRẬN
 
-### 4.1 Ý tưởng trực quan
+### 🟢 4.1 Ý tưởng trực quan
 
 Chúng ta đã biết ma trận là "máy biến hình" — nó xoay, kéo giãn vector. Nhưng có những vector đặc biệt mà khi đi qua "máy", chúng **không đổi hướng** — chỉ bị kéo dài hoặc thu ngắn. Đó là **vector riêng**.
 
@@ -915,7 +1111,7 @@ Hãy tưởng tượng bạn thả một đám cọng rơm xuống dòng suối 
 | **Nén ảnh** | Giữ lại eigenvalue lớn = giữ thông tin chính |
 | **Phân tích rung động** | Eigenvalue = tần số rung tự nhiên |
 
-### 4.3 Code Python: Eigenvalue trong thực tế
+### 🔵 4.3 Code Python: Eigenvalue trong thực tế
 
 ```python
 import numpy as np
@@ -1149,9 +1345,25 @@ plt.show()
 
 ---
 
+> ✅ **CHECKPOINT 4 — Eigenvalue, Eigenvector & PCA**
+>
+> 1. Nếu $A \cdot \vec{v} = 3 \cdot \vec{v}$, thì $\vec{v}$ là gì của A? Và 3 là gì?
+> 2. Google PageRank dùng eigenvector để làm gì?
+> 3. PCA giảm chiều dữ liệu bằng cách nào? Nó có "bỏ" feature không?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. $\vec{v}$ là **vector riêng** (eigenvector) và 3 là **giá trị riêng** (eigenvalue). Nghĩa: khi nhân A với $\vec{v}$, vector không đổi hướng, chỉ dài gấp 3
+> 2. Tìm trang web "quan trọng nhất" = eigenvector ứng với eigenvalue lớn nhất của ma trận liên kết web
+> 3. PCA tạo feature **MỚI** (principal component) = tổ hợp tuyến tính của feature cũ. Nó **KHÔNG bỏ** cột nào, mà tạo "góc nhìn" mới giữ nhiều thông tin nhất
+>
+> </details>
+
+---
+
 ## PHẦN 5: ỨNG DỤNG THỰC TẾ — NÉN ẢNH BẰNG SVD
 
-### 5.1 SVD là gì?
+### 🟢 5.1 SVD là gì?
 
 **SVD (Singular Value Decomposition)** — Phân rã Giá trị Kì dị — là cách "tháo rời" bất kỳ ma trận nào thành 3 phần đơn giản hơn:
 
@@ -1333,6 +1545,22 @@ print("-"*60)
 print("💡 Nhận xét: Chỉ cần k=20-50 đã giữ được hầu hết thông tin!")
 print("   Đây là nguyên lý nền tảng của nén dữ liệu trong CNTT.")
 ```
+
+---
+
+> ✅ **CHECKPOINT 5 — SVD & Nén Ảnh**
+>
+> 1. SVD phân rã ma trận A thành 3 thành phần nào?
+> 2. Nếu ảnh 1000×1000 pixel, dùng SVD với k=50. Giảm được bao nhiêu % dữ liệu?
+> 3. Tại sao giá trị kì dị (singular value) lớn = thành phần quan trọng?
+>
+> <details><summary>📝 Đáp án</summary>
+>
+> 1. $A = U \cdot \Sigma \cdot V^T$ (U = hướng hàng, Σ = mức quan trọng, Vᵀ = hướng cột)
+> 2. Gốc: 1,000,000 số. Nén: 50×(1000+1000+1) = 100,050 số → Giảm ≈ **90%!**
+> 3. Singular value lớn = pattern "mạnh" nhất trong dữ liệu (chi tiết chính). SV nhỏ = chi tiết phụ/nhiễu. Bỏ SV nhỏ ≈ bỏ nhiễu, giữ nét chính!
+>
+> </details>
 
 ---
 
@@ -1607,6 +1835,35 @@ print(w.grad)          # tensor([2., 4.]) ← Đúng! ∂f/∂w = 2w
 ```
 
 > 💡 **Key insight:** PyTorch = NumPy + Auto Gradient + GPU. Mọi kiến thức ĐSTT bạn học đều transfer 100%!
+
+---
+
+## ❓ CÂU HỎI THƯỜNG GẶP (FAQ)
+
+### "Đại số tuyến tính có khó không? Em không giỏi Toán phổ thông."
+
+Không khó như bạn nghĩ! 90% ĐSTT trong sách này chỉ cần biết cộng, trừ, nhân, chia. Cái khó không phải là tính toán, mà là **hiểu ý nghĩa**. Và đó là lý do sách này dùng liên tưởng đời thường thay vì định nghĩa khô khan. Nếu bạn làm được các Checkpoint mà không cần xem đáp án — bạn đã hiểu rồi!
+
+### "Tại sao phải học vector khi đã có danh sách (list) trong Python?"
+
+Vector **KHÔNG chỉ là list** số. Vector có các phép toán RIÊNG (dot product, norm, projection) — những phép toán mà list thông thường không có. Khi bạn viết `np.dot(a, b)`, bạn đang dùng toán vector — và đó là cách AI "đo sự giống nhau" giữa 2 thứ.
+
+### "Code quan trọng hơn hay Toán quan trọng hơn?"
+
+Cả hai là PISTON và XYLANH — thiếu 1 thì động cơ không chạy. Hiểu Toán giúp bạn **debug model** khi nó sai ("Tại sao loss không giảm?" — có thể do learning rate, do vanishing gradient, do ma trận suy biến). Biết code giúp bạn **thử nghiệm nhanh**. Sách này dạy song song cả hai.
+
+### "Em học xong chương này nhưng vẫn chưa hiểu eigenvalue. Có sao không?"
+
+Hoàn toàn bình thường! Eigenvalue là khái niệm cần **nhiều lần tiếp xúc** mới hiểu sâu. Bạn sẽ gặp lại nó ở:
+- Chương 6: Hessian matrix (eigen của đạo hàm bậc 2)
+- Chương 7: Markov Chain (phân phối dừng = eigenvector)
+- Khi làm PCA thực tế trên dữ liệu
+
+Mỗi lần gặp lại, bạn sẽ hiểu thêm một lớp. Đừng ép bản thân hiểu 100% ngay lần đầu!
+
+### "NumPy và PyTorch khác gì nhau? Cần học cả hai không?"
+
+PyTorch = NumPy + 2 siêu năng lực: **tự động tính gradient** (`loss.backward()`) và **chạy trên GPU** (nhanh 100x). Cú pháp gần như giống hệt nhau (xem bảng so sánh ở đầu phần Cầu nối NumPy→PyTorch). Học NumPy trước, chuyển PyTorch sau = tự nhiên!
 
 ---
 
