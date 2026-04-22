@@ -1,5 +1,23 @@
 # CHƯƠNG 1: ĐẠI SỐ TUYẾN TÍNH — NGÔN NGỮ CỦA KHÔNG GIAN
 
+## 📋 Metadata Chương
+
+| Mục | Chi tiết |
+|-----|---------|
+| **Tên chương** | Chương 1: Đại số Tuyến tính — Ngôn ngữ của Không gian |
+| **Hook** | Mọi bức ảnh bạn chụp, mọi video TikTok bạn xem, mọi gợi ý Netflix — đều là phép nhân ma trận đang chạy hàng tỉ lần mỗi giây. |
+| **Đối tượng** | Sinh viên CNTT, AI/Data Science, Kỹ thuật; người tự học muốn hiểu nền tảng AI |
+| **Điều kiện tiên quyết** | Toán phổ thông cơ bản (cộng, trừ, nhân). Không cần biết trước ĐSTT. |
+| **Thời gian học** | ~60 phút (Track 🟢🟡) \| ~90 phút (Track 🔵 — có code) |
+| **Mục tiêu đầu ra** | Sau chương này, người học có thể: |
+| | • **Phân biệt** scalar, vector, ma trận, tensor và biết khi nào dùng cái gì |
+| | • **Tính toán** tích vô hướng, nhân ma trận, norm, định thức, nghịch đảo bằng tay và code |
+| | • **Giải thích** eigenvector/eigenvalue bằng ngôn ngữ đời thường (không chỉ công thức) |
+| | • **Áp dụng** PCA để giảm chiều dữ liệu, SVD để nén ảnh bằng Python |
+| | • **Viết code** NumPy cho toàn bộ các phép toán ĐSTT và kết nối sang PyTorch |
+
+---
+
 ## 📖 LINEAR ALGEBRA — THE LANGUAGE OF SPACE
 
 > *"Nếu bạn muốn hiểu cách Instagram lọc màu ảnh, cách Netflix gợi ý phim, hay cách ChatGPT hiểu ngôn ngữ — thì tất cả bắt đầu từ đây: Đại số Tuyến tính."*
@@ -1838,6 +1856,126 @@ print(w.grad)          # tensor([2., 4.]) ← Đúng! ∂f/∂w = 2w
 
 ---
 
+## 📝 BÀI TẬP PHÂN TẦNG
+
+### 🟢 Mức A — Nhận biết
+
+**A1.** Câu nào mô tả ĐÚNG về vector? (a) Dãy số bất kỳ; (b) Có hướng và độ lớn — cùng phần tử khác thứ tự là khác nhau; (c) [3,4] và [4,3] giống nhau vì cùng tổng; (d) Vector phải 2D hoặc 3D.
+
+**A2.** Ma trận 3×5 nhân với 5×2 cho kết quả kích thước bao nhiêu?
+
+**A3.** Nếu det(A) = 0, điều gì đúng? (a) Có nghịch đảo; (b) Ax=b luôn có nghiệm; (c) Không có nghịch đảo — ma trận suy biến; (d) Là ma trận đơn vị.
+
+**A4.** L1 Norm và L2 Norm của vector [3, 4] lần lượt là bao nhiêu?
+
+**A5.** Eigenvector $\vec{v}$ thỏa mãn: (a) $A\vec{v}=\vec{0}$; **(b) $A\vec{v}=\lambda\vec{v}$**; (c) $A+\vec{v}=\lambda$; (d) $\vec{v}$ là hàng của A.
+
+<details><summary>📝 Đáp án A</summary>
+
+- A1: **(b)** — [3,4] ≠ [4,3] vì khác hướng
+- A2: **(3×2)** — Cột A = Hàng B → được nhân
+- A3: **(c)** — det=0 → Suy biến → Không nghịch đảo
+- A4: L1 = **7** (=|3|+|4|) ; L2 = **5** (=√25)
+- A5: **(b)** — Định nghĩa eigenvector
+
+</details>
+
+---
+
+### 🟡 Mức B — Tính toán cơ bản
+
+**B1.** Cho $\vec{a}=[2,1,-3]$, $\vec{b}=[1,4,2]$. Tính: (a) $\vec{a}+\vec{b}$; (b) $3\vec{a}-2\vec{b}$; (c) $\vec{a}\cdot\vec{b}$; (d) $\|\vec{a}\|_2$.
+
+**B2.** Tính tay: $\begin{pmatrix}2&1\\0&3\end{pmatrix} \times \begin{pmatrix}4&1\\2&-1\end{pmatrix}$
+
+**B3.** Cho $A=\begin{pmatrix}5&2\\1&3\end{pmatrix}$: (a) Tính det(A); (b) Tìm $A^{-1}$; (c) Kiểm tra $A\times A^{-1}=I$.
+
+**B4.** Giải hệ bằng phương pháp ma trận: $\begin{cases}3x+y=7\\x+2y=4\end{cases}$
+
+**B5.** Cho $A=\begin{pmatrix}2&0\\0&3\end{pmatrix}$. Tìm eigenvalue và eigenvector "bằng mắt" — không cần tính.
+
+<details><summary>📝 Đáp án B</summary>
+
+**B1:** (a) [3,5,-1]; (b) [4,-5,-13]; (c) **0** → vuông góc!; (d) √14 ≈ 3.74
+
+**B2:** $\begin{pmatrix}10&1\\6&-3\end{pmatrix}$
+
+**B3:** (a) det = 15−2 = **13**; (b) $A^{-1}=\frac{1}{13}\begin{pmatrix}3&-2\\-1&5\end{pmatrix}$; (c) PT (1,1): 5×3/13 + 2×(-1)/13 = 1 ✅
+
+**B4:** det = 6−1 = 5 ≠ 0 → Nghiệm duy nhất: **x=2, y=1**
+
+**B5:** λ₁=**2** (v₁=[1,0]), λ₂=**3** (v₂=[0,1]). Ma trận đường chéo → Trục tọa độ chính là eigenvector!
+
+</details>
+
+---
+
+### 🔵 Mức C — Giải thích và so sánh
+
+**C1.** Tại sao dot product đo được "sự phù hợp" trong Recommendation System? Giải thích không dùng công thức. Nêu 1 hạn chế của phương pháp này.
+
+**C2.** So sánh L1 (Lasso) vs L2 (Ridge): (a) Mỗi loại ưu tiên gì? (b) Khi nào dùng L1/ L2? (c) Tại sao L1 tạo sparse weight còn L2 thì không? (Gợi ý: nghĩ về hình dạng "quả bóng norm")
+
+**C3.** Chứng minh $A\times B \neq B\times A$ bằng ví dụ cụ thể. Sau đó nêu 1 trường hợp khi $AB=BA$ (ngoài trường hợp A hoặc B là ma trận đơn vị).
+
+**C4.** Phân biệt PCA và Feature Selection: (a) Cái nào "bỏ" feature gốc, cái nào tạo feature mới? (b) Khi nào nên dùng PCA thay vì chọn feature? (c) PCA có nhược điểm gì về khả năng giải thích?
+
+**C5.** Cho $A=\begin{pmatrix}1&2\\2&4\end{pmatrix}$. Tính det(A). Hệ $A\vec{x}=\vec{b}$ có bao nhiêu nghiệm khi $\vec{b}=[3,6]^T$? Khi $\vec{b}=[3,7]^T$? Giải thích hình học.
+
+---
+
+### 🔴 Mức D — Ứng dụng thực tế (Code)
+
+**D1. Collaborative Filtering đơn giản:**
+Tạo dataset 20 người dùng × 10 phim (rating 1-10). Mean-center từng user. Dùng cosine similarity để tìm 3 user giống user mới nhất. Gợi ý phim họ thích.
+
+**D2. SVD Image Compression:**
+Tải ảnh grayscale thật. Nén với k = 5, 10, 20, 50, 100. Vẽ biểu đồ MSE vs k và Compression ratio vs k. Tìm "điểm gối" (knee point) — k tối ưu. Bonus: ảnh RGB.
+
+**D3. PCA từ đầu trên Iris dataset:**
+Dùng sklearn.datasets.load_iris. Implement PCA không dùng sklearn: Standardize → Covariance → Eig → Project → Plot PC1 vs PC2 (tô màu theo loài). Bao nhiêu PC để giữ 95% thông tin?
+
+**D4. Mini PageRank:**
+Xây dựng đồ thị 5 trang web. Tạo ma trận chuyển tiếp (transition matrix) với damping factor 0.85. Implement Power Iteration để tìm eigenvector chính. Xếp hạng trang theo tầm quan trọng.
+
+---
+
+## 🆘 HỖ TRỢ NGƯỜI TỰ HỌC
+
+### 📚 Tài nguyên học tiếp
+
+| Nguồn | Nội dung | Khi nào dùng |
+|-------|---------|-------------|
+| **3Blue1Brown — Essence of LA** (YouTube) | Trực quan hóa mọi khái niệm | Sau khi học mỗi phần |
+| **MIT 18.06 — Gilbert Strang** (OCW) | Giảng bài kinh điển, đầy đủ | Muốn đào sâu hơn |
+| **Fast.ai — Practical DL** | ĐSTT sống trong AI thực | Sau Ch.5 |
+| **The Matrix Cookbook** (PDF) | Bảng công thức tra cứu | Khi cần công thức |
+
+### 🗺️ Lộ trình ôn nếu bị hổng
+
+```
+Quên vector?     → §🟢 1.1 (5 phút) → Checkpoint 1
+Quên nhân matrix? → 🌱 VÍ DỤ VỠ LÒNG §2.2 → Bài B2
+Không hiểu eigen? → §4.1 "Dòng nước và cọng rơm" → Code §4.3
+Không nhớ PCA?   → §4B.2 "Chụp ảnh bóng" → Code §4B.4
+```
+
+### ✅ Checklist tự đánh giá — "Tôi thật sự hiểu chưa?"
+
+- [ ] Giải thích dot product cho người chưa học toán, không dùng công thức
+- [ ] Tính tay: $[2,3]\cdot[4,-1]$ và $\begin{pmatrix}1&2\\3&4\end{pmatrix}\times\begin{pmatrix}1\\2\end{pmatrix}$
+- [ ] Giải thích: Tại sao det(A)=0 nguy hiểm?
+- [ ] Viết code NumPy: Tạo matrix, nhân, det, inv, giải Ax=b
+- [ ] Giải thích eigenvector bằng ví dụ "dòng nước và cọng rơm"
+- [ ] Chạy PCA trên dataset mới, đọc explained variance
+- [ ] Nén ảnh SVD với 3 mức k, nhận xét chất lượng vs tỉ lệ nén
+
+> **6–7 ✅ → Xuất sắc! Sang Chương 2.**
+> **4–5 ✅ → Tốt. Xem lại 1–2 phần yếu rồi tiếp tục.**
+> **< 4 ✅ → Làm lại Checkpoint. Đừng vội sang chương mới.**
+
+---
+
 ## ❓ CÂU HỎI THƯỜNG GẶP (FAQ)
 
 ### "Đại số tuyến tính có khó không? Em không giỏi Toán phổ thông."
@@ -1848,7 +1986,7 @@ Không khó như bạn nghĩ! 90% ĐSTT trong sách này chỉ cần biết cộ
 
 Vector **KHÔNG chỉ là list** số. Vector có các phép toán RIÊNG (dot product, norm, projection) — những phép toán mà list thông thường không có. Khi bạn viết `np.dot(a, b)`, bạn đang dùng toán vector — và đó là cách AI "đo sự giống nhau" giữa 2 thứ.
 
-### "Code quan trọng hơn hay Toán quan trọng hơn?"
+
 
 Cả hai là PISTON và XYLANH — thiếu 1 thì động cơ không chạy. Hiểu Toán giúp bạn **debug model** khi nó sai ("Tại sao loss không giảm?" — có thể do learning rate, do vanishing gradient, do ma trận suy biến). Biết code giúp bạn **thử nghiệm nhanh**. Sách này dạy song song cả hai.
 

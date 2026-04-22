@@ -1,6 +1,26 @@
 # CHƯƠNG 7: THỐNG KÊ SUY DIỄN & MÔ HÌNH NÂNG CAO
 
+## 📋 Metadata Chương
+
+| Mục | Chi tiết |
+|-----|---------|
+| **Tên chương** | Chương 7: Thống kê Suy diễn & Mô hình Nâng cao — Chương Cuối |
+| **Hook** | 95% chính xác — Nhưng có thật không? Hay chỉ may mắn? Đây là chương dạy bạn phân biệt sự thật và ảo tưởng. |
+| **Đối tượng** | Data Scientists, ML Engineers; người muốn đánh giá model đúng cách |
+| **Điều kiện tiên quyết** | Ch.3 (Phân phối chuẩn, Xác suất). Ch.1 (Eigenvector — cho Markov). |
+| **Thời gian học** | ~45 phút (Track 🟢🟡) \| ~75 phút (Track 🔵) |
+| **Mục tiêu đầu ra** | Sau chương này, người học có thể: |
+| | • **Thực hiện** Hypothesis Testing 5 bước — A/B testing thực tế |
+| | • **Tính và giải thích** Confidence Interval cho model accuracy |
+| | • **Cài đặt** Logistic Regression từ đầu với Binary Cross-Entropy |
+| | • **Xây dựng** Markov Chain và tìm phân phối dừng (stationary distribution) |
+| | • **Áp dụng** Monte Carlo để ước lượng và mô phỏng rủi ro |
+| | • **Nhận diện** Bias-Variance Tradeoff và chọn đúng giải pháp |
+
+---
+
 ## 📖 STATISTICAL INFERENCE & ADVANCED MODELS
+
 
 > *"Ai cũng biết trung bình, biết đếm. Nhưng khả năng nói 'Kết quả này THẬT SỰ có ý nghĩa, không phải do may mắn' — đó mới là sức mạnh thực sự của thống kê."*
 
@@ -1124,5 +1144,150 @@ Mở rộng Monte Carlo pricing: thêm Put option, Asian option (trung bình), v
 ---
 
 > *"Toán học không phải là điều bạn NHỚ. Toán học là điều bạn HIỂU — và khi hiểu rồi, bạn sẽ không bao giờ quên."*
-> 
+>
 > — Triết lý của giáo trình "Toán học không rào cản"
+
+---
+
+## 📝 BÀI TẬP PHÂN TẦNG (TỔNG KẾT CUỐI SÁCH)
+
+### 🟢 Mức A — Nhận biết
+
+**A1.** p-value = 0.02 và ngưỡng α = 0.05. Kết luận: (a) Bác bỏ H₀; (b) Không bác bỏ H₀; (c) Chấp nhận H₀; (d) Không có kết luận.
+
+**A2.** Confidence Interval 95% cho học lực trung bình là [6.8, 7.2]. Điều đó có nghĩa là 95% học sinh đạt điểm trong khoảng này không? Giải thích.
+
+**A3.** Logistic Regression và Linear Regression: Cái nào cho output là xác suất (0-1)? Hàm nào giúp "ép" output vào khoảng này?
+
+**A4.** "Trạng thái tương lai chỉ phụ thuộc trạng thái hiện tại" — đây là tính chất gì? Ứng dụng trong ML là gì?
+
+**A5.** Monte Carlo dùng để làm gì? Lợi thế chính của nó so với giải tích phân chính xác là gì?
+
+<details><summary>📝 Đáp án A</summary>
+
+- A1: **(a)** — p < α → Bác bỏ H₀. Chú ý: không "chấp nhận H₀", chỉ "không đủ bằng chứng bác bỏ H₀".
+- A2: **Không.** CI 95% nghĩa là: Nếu lặp lại mẫu nhiều lần, 95% các CI tính được sẽ chứa giá trị thật. Không phải "95% cá nhân trong khoảng".
+- A3: **Logistic Regression**. Hàm **Sigmoid** $\sigma(z) = 1/(1+e^{-z})$ ép output vào (0,1).
+- A4: **Tính chất Markov**. Trong ML: Language Models (biết từ hiện tại → dự đoán từ tiếp theo).
+- A5: **Ước lượng bằng mô phỏng ngẫu nhiên**. Lợi thế: Giải được khi không có công thức chính xác (tích phân cao chiều, bài toán phức tạp).
+
+</details>
+
+---
+
+### 🟡 Mức B — Tính toán cơ bản
+
+**B1.** A/B Testing: 1000 người thấy nút xanh (click 80), 1000 người thấy nút đỏ (click 110). Tính z-score và kết luận (α=0.05, z_crit=1.645 cho one-sided).
+
+**B2.** Confidence Interval: Survey 400 người, 52% ủng hộ chính sách. Tính 95% CI. Có thể kết luận đa số ủng hộ chưa?
+
+**B3.** Logistic Regression: $w = [0.5, -0.3]$, $b = -1$. Input $x = [4, 3]$. Tính $P(y=1|x)$.
+
+**B4.** Markov Chain 2 trạng thái (Tốt/Xấu): $P = \begin{pmatrix} 0.8 & 0.2 \\ 0.3 & 0.7 \end{pmatrix}$. Bắt đầu ở Tốt. Xác suất ở Tốt sau 2 bước?
+
+<details><summary>📝 Đáp án B</summary>
+
+**B1:** $p_A = 80/1000 = 0.08$, $p_B = 110/1000 = 0.11$. $p_{pool} = 190/2000 = 0.095$
+$SE = \sqrt{0.095 \times 0.905 \times (1/1000 + 1/1000)} = \sqrt{0.000172} = 0.01312$
+$z = (0.11 - 0.08)/0.01312 = \mathbf{2.29} > 1.645 \Rightarrow$ **Bác bỏ H₀ — Nút đỏ tốt hơn!**
+
+**B2:** $p = 0.52$, $SE = \sqrt{0.52 \times 0.48/400} = 0.025$. CI = $0.52 \pm 1.96 \times 0.025 = \mathbf{[0.471, 0.569]}$. Chứa 0.5 → **Chưa thể kết luận đa số.**
+
+**B3:** $z = 0.5 \times 4 + (-0.3) \times 3 + (-1) = 2 - 0.9 - 1 = 0.1$. $P(y=1) = \sigma(0.1) = \frac{1}{1+e^{-0.1}} \approx \mathbf{0.525}$ → Biên giới, 52.5% positive.
+
+**B4:** $P^2 = P \times P$. $(P^2)_{11} = 0.8 \times 0.8 + 0.2 \times 0.3 = 0.64 + 0.06 = \mathbf{0.70}$. XS ở Tốt sau 2 bước = **70%**.
+
+</details>
+
+---
+
+### 🔵 Mức C — Giải thích và so sánh
+
+**C1. Kiểm tra kiến thức tổng hợp:** Cho scenario: Công ty chạy A/B test 2 tuần. Nhóm A (cũ): 10,000 user, 320 mua (3.2%). Nhóm B (mới): 10,000 user, 345 mua (3.45%). p-value = 0.23 > 0.05.
+- (a) Kết luận thống kê là gì?
+- (b) Từ góc độ business, liệu nên deploy B không? Phân tích tradeoff.
+- (c) Bao nhiêu user mỗi nhóm mới đủ power để phát hiện sự khác biệt này (statistical power analysis)?
+
+**C2.** Tại sao Logistic Regression dùng Cross-Entropy chứ không phải MSE? Chứng minh bằng lập luận convexity.
+
+**C3.** Phân phối dừng của Markov Chain = eigenvector với eigenvalue = 1. Tại sao? Kết nối với Google PageRank (Ch.1).
+
+---
+
+### 🔴 Mức D — Dự án tổng kết & Capstone
+
+**D-Capstone: Đánh giá ML Model hoàn chỉnh**
+
+Bạn đã train 3 models (Logistic Regression, SVM, Simple Neural Network) trên dataset phân loại email spam. Thực hiện đánh giá đầy đủ:
+
+1. **Hypothesis Testing:** Dùng paired t-test để kiểm tra: "Model A và Model B có accuracy khác nhau có ý nghĩa thống kê không?" (Bootstrap với 1000 lần sampling)
+
+2. **Confidence Interval:** Tính 95% CI cho accuracy của model tốt nhất
+
+3. **A/B Testing:** Giả lập deploy model mới cho 50% user. Sau 1 tuần, một model sai 8.3% email, model kia sai 7.1%. Kiểm định thống kê.
+
+4. **Bias-Variance Analysis:** Vẽ learning curve (training size vs train/val error) để chẩn đoán underfitting hay overfitting.
+
+5. **Model Card:** Viết 1 trang "Model Card" theo chuẩn Google AI: Mô tả model, điều kiện sử dụng, hạn chế, và bias tiềm năng.
+
+---
+
+## 🆘 HỖ TRỢ NGƯỜI TỰ HỌC
+
+### 📚 Tài nguyên học tiếp — Sau khi hoàn thành sách
+
+| Bước tiếp theo | Tài nguyên | Thời gian |
+|---------------|-----------|----------|
+| **Deep Learning** | fast.ai / CS231n / DL Book | 3-6 tháng |
+| **Statistics** | Statistical Learning (ESL/ISL) | 2-4 tháng |
+| **Kaggle** | Competitions + Notebooks | Liên tục |
+| **Research Papers** | ArXiv / Papers With Code | Hàng tuần |
+| **MLOps** | MLflow, DVC, Evidently AI | Khi làm việc thực tế |
+
+### 🏆 Checklist tự đánh giá — TỔNG KẾT TOÀN BỘ SÁCH
+
+Sau khi học xong 8 chương (Ch.0–7), bạn có thể:
+
+**📐 Đại số Tuyến tính (Ch.1)**
+- [ ] Tính dot product, nhân ma trận, norm, det, nghịch đảo
+- [ ] Giải thích eigenvector/eigenvalue bằng ngôn ngữ đời thường
+- [ ] Chạy PCA và SVD, giải thích kết quả
+
+**📉 Giải tích (Ch.2)**
+- [ ] Tính đạo hàm riêng, áp dụng Chain Rule
+- [ ] Cài Gradient Descent từ đầu cho hàm 2D
+- [ ] Giải thích Adam = GD + adaptive lr + momentum
+
+**🎲 Xác suất (Ch.3)**
+- [ ] Tính P(A|B) bằng Bayes cho bài toán thực tế
+- [ ] Phân biệt 6 phân phối và khi nào dùng
+- [ ] Giải thích Cross-Entropy là gì và tại sao dùng
+
+**🔗 Toán Rời rạc (Ch.4)**
+- [ ] Code BFS, DFS, Dijkstra từ đầu
+- [ ] Tính tổ hợp cho bài toán thực tế
+
+**🤖 Hệ thống AI (Ch.5)**
+- [ ] Truy vết từng thành phần AI về đúng chương Toán
+- [ ] Code Convolution từ đầu, giải thích FedAvg
+
+**🎯 Tối ưu Nâng cao (Ch.6)**
+- [ ] Tính Jacobian, dùng Hessian phân loại điểm dừng
+- [ ] Nhận ra vanishing gradient, biết cách fix
+
+**📊 Thống kê Suy diễn (Ch.7)**
+- [ ] Thực hiện A/B testing và hypothesis testing đầy đủ
+- [ ] Tính CI và giải thích đúng ý nghĩa
+
+> **20+ ✅ → Xuất sắc! Bạn đã làm chủ nền tảng Toán học cho AI.**
+> **15+ ✅ → Rất tốt! Ôn thêm 5–6 mục còn thiếu.**
+> **< 15 ✅ → Xem lại checklist từng chương.**
+
+---
+
+> 🎓 **Chúc mừng bạn đã hoàn thành giáo trình "Toán học không rào cản"!**
+>
+> *Bạn đã đi 8 chặng đường từ vector đầu tiên đến hypothesis testing. Mỗi công thức không còn là ký hiệu xa lạ — mà là ngôn ngữ bạn đọc được, hiểu được, và dùng được.*
+>
+> **Bước tiếp theo:** Hãy mở 1 Kaggle competition, đọc 1 paper ML, hoặc build 1 project nhỏ. Toán học chỉ thật sự sống khi bạn dùng nó!
+

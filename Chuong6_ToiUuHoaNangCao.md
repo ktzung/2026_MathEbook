@@ -1,6 +1,25 @@
 # CHƯƠNG 6: TỐI ƯU HÓA NÂNG CAO — NGHỆ THUẬT TÌM ĐÍCH
 
+## 📋 Metadata Chương
+
+| Mục | Chi tiết |
+|-----|---------|
+| **Tên chương** | Chương 6: Tối ưu hóa Nâng cao — Nghệ thuật Tìm đích |
+| **Hook** | Gradient Descent là la bàn. Chương này cho bạn bản đồ địa hình, kính viễn vọng, và đôi giày chuyên dụng. |
+| **Đối tượng** | Sinh viên AI/ML muốn hiểu sâu về training; kỹ sư ML muốn debug khi model không hội tụ |
+| **Điều kiện tiên quyết** | Ch.2 (Đạo hàm riêng, Gradient Descent). Ch.1 (Eigenvalue). |
+| **Thời gian học** | ~50 phút (Track 🟢🟡) \| ~90 phút (Track 🔵) |
+| **Mục tiêu đầu ra** | Sau chương này, người học có thể: |
+| | • **Tính và giải thích** Jacobian Matrix — tại sao nó là backprop |
+| | • **Dùng Hessian** để phân loại: cực tiểu / cực đại / yên ngựa |
+| | • **Nhận ra** vanishing gradient, giải thích tại sao ReLU + ResNet giúp |
+| | • **Cài đặt** Lagrange để tối ưu có ràng buộc (ứng dụng SVM, budgeting) |
+| | • **Chọn LR Scheduler** phù hợp và giải thích lý do |
+
+---
+
 ## 📖 ADVANCED OPTIMIZATION
+
 
 > *"Gradient Descent là chiếc la bàn. Chương này cho bạn bản đồ địa hình, kính viễn vọng, và đôi giày chuyên dụng — để không chỉ TÌM ĐƯỢC đáy, mà tìm được đáy NHANH NHẤT và ĐÚNG NHẤT."*
 
@@ -1032,4 +1051,117 @@ Tạo neural network 10 layers (sigmoid) và 10 layers (ReLU). So sánh gradient
 
 ---
 
-> 📖 **Chương tiếp theo:** [Chương 7: Thống kê Suy diễn & Mô hình Nâng cao](Chuong7_ThongKeSuyDien.md) — *"Hypothesis testing cho bạn khả năng gọi tên: 'Kết quả này thật sự có ý nghĩa, hay chỉ do may mắn?'"*
+## 📝 BÀI TẬP PHÂN TẦNG
+
+### 🟢 Mức A — Nhận biết
+
+**A1.** Jacobian khác Gradient ở điểm gì? Gradient dùng khi nào, Jacobian dùng khi nào?
+
+**A2.** Hessian Matrix có eigenvalues đều dương. Điểm dừng đó là cực tiểu, cực đại, hay yên ngựa?
+
+**A3.** Tại sao không dùng Newton's Method cho Deep Learning dù nó hội tụ nhanh hơn GD?
+
+**A4.** Vanishing gradient: Sigmoid hay ReLU bị ảnh hưởng nặng hơn? Tại sao?
+
+**A5.** Learning rate scheduler "Warmup then Decay" hữu ích nhất trong trường hợp nào? (a) Training từ đầu; (b) Fine-tuning từ pretrained model; (c) Cả hai; (d) Không loại nào.
+
+<details><summary>📝 Đáp án A</summary>
+
+- A1: Gradient = vector đạo hàm cho **hàm 1 output** (scalar). Jacobian = **ma trận** đạo hàm cho **hàm nhiều output** (vector → vector).
+- A2: **Cực tiểu (minimum)** — Tất cả eigenvalue H > 0 = bề mặt lồi lên ở mọi hướng.
+- A3: Newton tính $H^{-1}$ mỗi bước → **O(n³)** với n tham số. Model 100M tham số → tính H⁻¹ bất khả thi.
+- A4: **Sigmoid**. Đạo hàm max = 0.25 → Sau 10 layer: 0.25¹⁰ ≈ 10⁻⁶. ReLU đạo hàm = 1 khi x>0.
+- A5: **(c)** — Warmup tránh "bước nhảy" lúc đầu, đặc biệt quan trọng khi fine-tuning pretrained model.
+
+</details>
+
+---
+
+### 🟡 Mức B — Tính toán cơ bản
+
+**B1.** Tính Jacobian của $f(x,y) = [3x + y^2,\ x^2 - 2y]$ tại điểm $(2, 3)$.
+
+**B2.** Cho Hessian $H = \begin{pmatrix} 4 & 2 \\ 2 & 3 \end{pmatrix}$. Tính eigenvalue. Phân loại điểm dừng.
+
+**B3.** Tối ưu Lagrange: Tìm $\max f(x,y) = xy$ với ràng buộc $x + y = 10$. (Gợi ý: $\mathcal{L} = xy - \lambda(x+y-10)$).
+
+**B4.** Taylor Expansion: $\sin(x) \approx x - \frac{x^3}{6}$ (bậc 3). Tính sai số khi $x = 0.5$ radian.
+
+<details><summary>📝 Đáp án B</summary>
+
+**B1:**
+$$J = \begin{pmatrix} \partial f_1/\partial x & \partial f_1/\partial y \\ \partial f_2/\partial x & \partial f_2/\partial y \end{pmatrix} = \begin{pmatrix} 3 & 2y \\ 2x & -2 \end{pmatrix}$$
+Tại (2,3): $J = \begin{pmatrix} 3 & 6 \\ 4 & -2 \end{pmatrix}$
+
+**B2:** $\det(H - \lambda I) = (4-\lambda)(3-\lambda) - 4 = 0$
+$\lambda^2 - 7\lambda + 8 = 0 \Rightarrow \lambda = (7 \pm \sqrt{17})/2 \approx \mathbf{5.56}$ và $\mathbf{1.44}$. Cả hai đều dương → **Cực tiểu!**
+
+**B3:** $\nabla_x \mathcal{L} = y - \lambda = 0 \Rightarrow y = \lambda$; $\nabla_y \mathcal{L} = x - \lambda = 0 \Rightarrow x = \lambda$. Vậy $x = y = 5$. $\max xy = \mathbf{25}$ (chia đều nhất = tối ưu!)
+
+**B4:** $\sin(0.5) \approx 0.5 - 0.5^3/6 = 0.5 - 0.0208 = 0.4792$. Giá trị thực: $\sin(0.5) = 0.4794$. Sai số ≈ **0.0002** (rất nhỏ!)
+
+</details>
+
+---
+
+### 🔵 Mức C — Giải thích và so sánh
+
+**C1.** Saddle point trong không gian chiều cao (nhiều tham số) thực sự phổ biến như thế nào? Tại sao đây lại là vấn đề khác với chiều thấp? SGD (có noise) xử lý saddle point như thế nào?
+
+**C2.** Residual Connection (ResNet) giúp vanishing gradient bằng cách tạo "shortcut". Vẽ sơ đồ và giải thích luồng gradient có và không có residual connection.
+
+**C3.** SVM là bài toán Lagrange constrained optimization. Viết bài toán primal và dual, giải thích $\lambda$ (support vectors) có ý nghĩa toán học và hình học gì.
+
+---
+
+### 🔴 Mức D — Ứng dụng thực tế (Code)
+
+**D1. Newton's Method vs GD:**
+Cài đặt Newton's Method cho hàm 2D (tính H⁻¹ bằng `np.linalg.inv`). So sánh số bước hội tụ với GD trên $f(x,y) = x^4 + 3x^2y + y^4 - 2y^2$. Vẽ đường đi của cả 2.
+
+**D2. ResNet Mini:**
+Cài đặt 5-layer network với và không có residual connection. In norm gradient cho mỗi layer. Chứng minh residual giúp gradient không biến mất.
+
+**D3. LR Finder:**
+Implement LR Finder: Train 1 epoch với lr tăng từ 10⁻⁷ đến 10. Log loss theo lr. Tìm "sweet spot" — lr ngay trước khi loss bắt đầu tăng.
+
+---
+
+## 🆘 HỖ TRỢ NGƯỜI TỰ HỌC
+
+### 📚 Tài nguyên học tiếp
+
+| Nguồn | Nội dung | Khi nào dùng |
+|-------|---------|-------------|
+| **Deep Learning Book** (Goodfellow) Ch.4,8 | Optimization chuyên sâu | Muốn lý thuyết đầy đủ |
+| **Sebastian Ruder — Optimizer Blog** | So sánh optimizer | Nhanh, thực tế |
+| **Papers: ResNet, Batch Norm** | Nguồn gốc kỹ thuật | Khi muốn hiểu sâu |
+| **PyTorch LR Schedulers Docs** | Tất cả scheduler | Khi code |
+
+### 🗺️ Lộ trình ôn nếu bị hổng
+
+```
+Quên Jacobian?          → §1.1 "Bàn mixer nâng cấp" → Bài B1
+Quên Hessian/saddle?    → §2.1-2.2 + Code 3D plot → Bài B2
+Quên Lagrange?          → §4.2 + Ví dụ Marketing → Bài B3
+Quên Vanishing Gradient? → §5.1-5.2 Bảng giải pháp → C2
+```
+
+### ✅ Checklist tự đánh giá
+
+- [ ] Giải thích: Jacobian là "Gradient phiên bản nhiều output"
+- [ ] Dùng eigenvalue Hessian để phân loại điểm dừng
+- [ ] Nhận diện: "model không học được" → Kiểm tra vanishing gradient
+- [ ] Cài layer ReLU thay Sigmoid và so sánh gradient norm
+- [ ] Cài Lagrange cho bài tối ưu ngân sách đơn giản
+
+> **5 ✅ → Sẵn sàng sang Chương 7 (Chương cuối!).**
+> **3–4 ✅ → Xem lại 1–2 mục yếu.**
+> **< 3 ✅ → Ôn lại Ch.2 trước.**
+
+---
+
+> 📖 **Chương tiếp theo:** [Chương 7: Thống kê Suy diễn & Mô hình Nâng cao](Chuong7_ThongKeSuyDien.md)
+>
+> *"Hypothesis testing cho bạn khả năng gọi tên: 'Kết quả này thật sự có ý nghĩa, hay chỉ do may mắn?'"*
+

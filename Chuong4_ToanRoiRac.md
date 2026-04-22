@@ -1,6 +1,25 @@
 # CHƯƠNG 4: TOÁN RỜI RẠC — CẤU TRÚC CỦA THẾ GIỚI SỐ
 
+## 📋 Metadata Chương
+
+| Mục | Chi tiết |
+|-----|---------|
+| **Tên chương** | Chương 4: Toán Rời rạc — Cấu trúc của Thế giới số |
+| **Hook** | GPS, mạng xã hội, blockchain, bộ nhớ máy tính — tất cả đều xây dựng trên một ý tưởng: biến thế giới thành chấm và đường nối. |
+| **Đối tượng** | Sinh viên CNTT, Software Engineering; người học thuật toán và cấu trúc dữ liệu |
+| **Điều kiện tiên quyết** | Ch.0 (tư duy logic), Ch.1 §1.3 (Ma trận kề). |
+| **Thời gian học** | ~60 phút (Track 🟢🟡) \| ~90 phút (Track 🔵) |
+| **Mục tiêu đầu ra** | Sau chương này, người học có thể: |
+| | • **Xây dựng** đồ thị bằng ma trận kề và danh sách kề, biết khi nào dùng cái nào |
+| | • **Cài đặt** BFS và DFS — giải thích sự khác biệt và ứng dụng mỗi loại |
+| | • **Chạy tay** thuật toán Dijkstra trên đồ thị nhỏ, code GPS Navigator |
+| | • **Áp dụng** logic mệnh đề để viết điều kiện phức tạp trong code |
+| | • **Tính toán** tổ hợp, chỉnh hợp — ứng dụng trong phân tích độ phức tạp và bảo mật |
+
+---
+
 ## 📖 DISCRETE MATHEMATICS — THE STRUCTURE OF THE DIGITAL WORLD
+
 
 > *"Google Maps tìm đường đi ngắn nhất cho 2 tỷ chuyến đi mỗi ngày. Facebook kết nối 3 tỷ người. Tất cả dựa trên một ý tưởng: biến thế giới thành các chấm và đường nối — gọi là Đồ thị."*
 
@@ -1033,4 +1052,135 @@ Cho đồ thị mạng xã hội 30 nodes, dùng thuật toán phát hiện các
 
 ---
 
-> 📖 **Chương tiếp theo:** [Chương 5: Tư duy Hệ thống & Công nghệ mới](Chuong5_TuDuyHeThong.md) — *"Khi Đại số, Giải tích, Xác suất và Toán rời rạc gặp nhau — AI ra đời."*
+## 📝 BÀI TẬP PHÂN TẦNG
+
+### 🟢 Mức A — Nhận biết
+
+**A1.** Đồ thị vô hướng (undirected) khác đồ thị có hướng (directed) ở điểm nào? Đưa ra 1 ví dụ cho mỗi loại.
+
+**A2.** BFS và DFS: Loại nào dùng Queue (FIFO)? Loại nào dùng Stack (LIFO)?
+
+**A3.** Dijkstra có hoạt động với trọng số âm không? Tại sao?
+
+**A4.** $C(10, 3)$ = ? (Tổ hợp chọn 3 từ 10, không kể thứ tự). Công thức?
+
+**A5.** Trong logic mệnh đề, $P \Rightarrow Q$ (P kéo theo Q) tương đương với biểu thức nào? (a) $P \wedge Q$; (b) $\neg P \vee Q$; (c) $P \vee \neg Q$; (d) $\neg Q \Rightarrow \neg P$.
+
+<details><summary>📝 Đáp án A</summary>
+
+- A1: Vô hướng: cạnh A-B = đi được 2 chiều (Facebook). Có hướng: cạnh A→B = chỉ 1 chiều (Twitter follow).
+- A2: BFS → **Queue** (FIFO: vào trước ra trước). DFS → **Stack** (LIFO: vào sau ra trước).
+- A3: **Không**. Dijkstra giả định đi thêm chỉ tăng chi phí. Trọng số âm phá vỡ giả định này → Dùng Bellman-Ford.
+- A4: $C(10,3) = \frac{10!}{3! \cdot 7!} = \frac{10 \times 9 \times 8}{3 \times 2 \times 1} = \mathbf{120}$
+- A5: **(b) và (d)** đều đúng. $P \Rightarrow Q \equiv \neg P \vee Q \equiv \neg Q \Rightarrow \neg P$ (contrapositive).
+
+</details>
+
+---
+
+### 🟡 Mức B — Tính toán cơ bản
+
+**B1.** Cho đồ thị: A→B(3), A→C(5), B→D(2), C→D(1), B→C(1). Chạy Dijkstra từ A để tìm đường ngắn nhất đến tất cả đỉnh. Điền vào bảng: Đỉnh → Khoảng cách ngắn nhất.
+
+**B2.** Làm BFS tay trên đồ thị: 1-{2,3}, 2-{4,5}, 3-{6}. Xuất phát từ 1. Thứ tự duyệt? Gợi ý: Dùng hàng đợi và đánh dấu đã thăm.
+
+**B3.** Tính:
+- (a) Số cách chọn 4 người từ 10 người (không kể thứ tự)
+- (b) Số mật khẩu 6 chữ số (mỗi chữ số 0-9, có thể trùng)
+- (c) Số anagram (hoán vị) của từ "TOÁN"
+
+**B4.** Xây dựng bảng chân trị cho biểu thức: $\neg(P \wedge Q) \equiv \neg P \vee \neg Q$ (Định luật De Morgan). Dùng tất cả 4 trường hợp T/F.
+
+<details><summary>📝 Đáp án B</summary>
+
+**B1:** Dijkstra từ A:
+- A: 0 (xuất phát)
+- B: 3 (A→B)
+- C: 4 (A→B→C, ngắn hơn A→C=5)
+- D: 5 (A→B→C→D = 3+1+1)
+
+**B2:** BFS từ 1: Hàng đợi [1] → thăm 1, thêm 2,3 → thăm 2, thêm 4,5 → thăm 3, thêm 6 → thăm 4,5,6. **Thứ tự: 1, 2, 3, 4, 5, 6**
+
+**B3:**
+- (a) $C(10,4) = \frac{10!}{4! \cdot 6!} = \mathbf{210}$
+- (b) $10^6 = \mathbf{1,000,000}$ (mỗi vị trí 10 lựa chọn, có thể trùng)
+- (c) 4 chữ khác nhau → $4! = \mathbf{24}$ hoán vị
+
+**B4:** Cả hai cột đều cho cùng kết quả → ¬(P∧Q) ≡ ¬P∨¬Q ✅ (Định luật De Morgan)
+
+| P | Q | P∧Q | ¬(P∧Q) | ¬P | ¬Q | ¬P∨¬Q |
+|---|---|-----|--------|----|----|-------|
+| T | T | T   | **F**  | F  | F  | **F** |
+| T | F | F   | **T**  | F  | T  | **T** |
+| F | T | F   | **T**  | T  | F  | **T** |
+| F | F | F   | **T**  | T  | T  | **T** |
+
+</details>
+
+---
+
+### 🔵 Mức C — Giải thích và so sánh
+
+**C1.** Tại sao BFS tìm đường ngắn nhất theo số cạnh, nhưng Dijkstra mới đúng cho đồ thị có trọng số? Cho ví dụ phản chứng: đồ thị mà BFS cho đường sai nhưng Dijkstra đúng.
+
+**C2.** Ma trận kề vs Danh sách kề: (a) Độ phức tạp thời gian và không gian của mỗi cách; (b) Khi nào ma trận kề tốt hơn? (c) Tại sao đồ thị mạng xã hội (Facebook) thường dùng danh sách kề?
+
+**C3.** Giải thích tại sao mạng neural (neural network) là một đồ thị có hướng không chu trình (DAG). Tại sao "không chu trình" lại quan trọng cho backpropagation?
+
+---
+
+### 🔴 Mức D — Ứng dụng thực tế (Code)
+
+**D1. GPS Navigator nâng cao:**
+Thêm tính năng: Optimize cho nhiều mục tiêu (thời gian ngắn nhất VÀ ít đèn đỏ nhất). Implement A* algorithm (GD* heuristic). So sánh A* vs Dijkstra về tốc độ.
+
+**D2. Phân tích mạng xã hội:**
+Tạo đồ thị Facebook giả 50 người dùng (random edges, p=0.1). Tính: (a) Degree distribution; (b) Clustering coefficient; (c) Shortest path trung bình (six degrees of separation). Vẽ các biểu đồ.
+
+**D3. Phát hiện cộng đồng (Community Detection):**
+Implement thuật toán Girvan-Newman đơn giản: Tính betweenness centrality của mỗi cạnh → Xóa cạnh có betweenness cao nhất → Lặp lại → Tìm các cluster.
+
+**D4. Logic Circuit Simulator:**
+Xây dựng simulator mạch logic: Các cổng AND, OR, NOT, XOR. Input = boolean vector. Tính output. Áp dụng: Thiết kế mạch cộng 4-bit (half adder + full adder).
+
+---
+
+## 🆘 HỖ TRỢ NGƯỜI TỰ HỌC
+
+### 📚 Tài nguyên học tiếp
+
+| Nguồn | Nội dung | Khi nào dùng |
+|-------|---------|-------------|
+| **CS50 — Algorithms** (Harvard) | Graph algorithms trực quan | Sau Phần 2-3 |
+| **LeetCode — Graph Problems** | Bài tập luyện BFS/DFS/Dijkstra | Chuẩn bị phỏng vấn |
+| **NetworkX Docs** (Python) | Thư viện đồ thị đầy đủ | Khi làm project |
+| **Rosen — Discrete Math** | Sách giáo khoa chuẩn | Muốn chứng minh nghiêm ngặt |
+
+### 🗺️ Lộ trình ôn nếu bị hổng
+
+```
+Quên BFS/DFS?       → §2.1-2.2 + VÍ DỤ "đá ném xuống ao / mê cung" → Bài B2
+Quên Dijkstra?      → §3.2 "Ngọn lửa lan trên bản đồ" → Bài B1
+Quên tổ hợp?        → §5.2 Bảng công thức → Bài B3
+Không nhớ logic?    → §4.2 Bảng phép toán → Bài B4
+```
+
+### ✅ Checklist tự đánh giá
+
+- [ ] Xây dựng đồ thị từ bài toán thực tế (ví dụ: bản đồ trường học)
+- [ ] Chạy tay BFS hoặc DFS trên đồ thị 5-7 đỉnh
+- [ ] Tính đường ngắn nhất bằng Dijkstra tay
+- [ ] Code BFS/DFS/Dijkstra từ đầu không xem tài liệu
+- [ ] Tính tổ hợp và chỉnh hợp cho bài toán mật khẩu
+- [ ] Phân biệt: BFS vs DFS, Tổ hợp vs Chỉnh hợp
+
+> **5–6 ✅ → Sẵn sàng sang Chương 5.**
+> **3–4 ✅ → Xem lại 1–2 mục yếu.**
+> **< 3 ✅ → Làm lại Checkpoint trước khi tiếp tục.**
+
+---
+
+> 📖 **Chương tiếp theo:** [Chương 5: Tư duy Hệ thống & Công nghệ mới](Chuong5_TuDuyHeThong.md)
+>
+> *"Khi Đại số, Giải tích, Xác suất và Toán rời rạc gặp nhau — AI ra đời."*
+

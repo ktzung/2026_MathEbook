@@ -1,6 +1,26 @@
 # CHƯƠNG 2: GIẢI TÍCH — LA BÀN TỐI ƯU HÓA
 
+## 📋 Metadata Chương
+
+| Mục | Chi tiết |
+|-----|---------|
+| **Tên chương** | Chương 2: Giải tích — La bàn Tối ưu hóa |
+| **Hook** | Mọi mô hình AI học được đều nhờ một phép tính đơn giản đến kinh ngạc: đo độ dốc, rồi bước xuống. Đó là Gradient Descent. |
+| **Đối tượng** | Sinh viên CNTT, AI/ML; người tự học muốn hiểu Backpropagation và tối ưu hóa |
+| **Điều kiện tiên quyết** | Ch.1 §1-2 (Vector, Ma trận cơ bản). Biết khái niệm hàm số f(x). |
+| **Thời gian học** | ~45 phút (Track 🟢🟡) \| ~80 phút (Track 🔵) |
+| **Mục tiêu đầu ra** | Sau chương này, người học có thể: |
+| | • **Giải thích** đạo hàm là "độ dốc" bằng ngôn ngữ đời thường (không chỉ công thức) |
+| | • **Tính toán** đạo hàm cơ bản, đạo hàm riêng, áp dụng Chain Rule |
+| | • **Hiểu** Gradient Descent: Tại sao đi ngược gradient? Tại sao learning rate quan trọng? |
+| | • **So sánh** SGD, Momentum, RMSProp, Adam — khi nào dùng cái nào |
+| | • **Viết code** PyTorch autograd và tự cài GD từ đầu bằng NumPy |
+| | • **Giải thích** hàm lồi (convex) và tại sao nó đảm bảo GD tìm được cực tiểu toàn cục |
+
+---
+
 ## 📖 CALCULUS — THE COMPASS OF OPTIMIZATION
+
 
 > *"Nếu AI là con tàu, thì Giải tích là la bàn giúp nó không đi lạc. Mỗi bước đi, đạo hàm chỉ cho AI biết: 'Đi hướng này sẽ tốt hơn.'"*
 
@@ -1414,5 +1434,169 @@ print(f"w = {w.item():.4f}")  # ≈ 3.0000 ✅
 
 ---
 
-> 📖 **Chương tiếp theo:** [Chương 3: Xác suất Thống kê — Quy luật của sự Bất định](Chuong3_XacSuatThongKe.md) — *"Làm sao Gmail biết email nào là Spam? Đó là nhờ Định lý Bayes."*
+---
+
+## 📝 BÀI TẬP PHÂN TẦNG
+
+### 🟢 Mức A — Nhận biết
+
+**A1.** Đạo hàm $f'(x)$ cho biết điều gì về hàm số $f(x)$ tại điểm $x$?
+- (a) Giá trị của hàm tại $x$
+- (b) Tốc độ thay đổi của hàm — "độ dốc" tại $x$
+- (c) Diện tích dưới đường cong đến $x$
+- (d) Giá trị trung bình của hàm
+
+**A2.** Khi $f'(x) = 0$ tại điểm $x_0$, điều đó có nghĩa là gì?
+- (a) Hàm bằng 0 tại $x_0$
+- (b) Hàm đang bằng phẳng — có thể là cực đại, cực tiểu, hoặc điểm uốn
+- (c) Hàm không liên tục tại $x_0$
+- (d) Đạo hàm không tồn tại
+
+**A3.** Gradient Descent cập nhật trọng số theo chiều nào?
+- (a) Theo chiều gradient (tăng nhanh nhất)
+- (b) Ngược chiều gradient (giảm nhanh nhất)
+- (c) Vuông góc với gradient
+- (d) Theo hướng ngẫu nhiên
+
+**A4.** Learning rate $\alpha$ quá lớn sẽ dẫn đến điều gì?
+- (a) Hội tụ nhanh hơn
+- (b) Nhảy qua lại, không hội tụ
+- (c) Bước đi chậm hơn
+- (d) Không ảnh hưởng
+
+**A5.** Chain Rule áp dụng để tính gì trong neural network?
+- (a) Giá trị output của mỗi layer
+- (b) Gradient qua nhiều lớp — nền tảng của Backpropagation
+- (c) Learning rate tự động
+- (d) Bias của từng neuron
+
+<details><summary>📝 Đáp án A</summary>
+
+- A1: **(b)** — Đạo hàm = tốc độ thay đổi = độ dốc
+- A2: **(b)** — f'=0 → bằng phẳng → cần kiểm tra thêm (đạo hàm bậc 2 hoặc nhìn đồ thị)
+- A3: **(b)** — GD đi NGƯỢC gradient vì muốn giảm loss
+- A4: **(b)** — lr quá lớn → bước nhảy vượt đáy → nhảy qua nhảy lại
+- A5: **(b)** — Backpropagation = Chain Rule áp dụng qua nhiều lớp
+
+</details>
+
+---
+
+### 🟡 Mức B — Tính toán cơ bản
+
+**B1.** Tính đạo hàm bằng tay:
+- (a) $f(x) = 5x^4 - 3x^2 + 2x - 7$
+- (b) $g(x) = e^{2x}$ (Gợi ý: $(e^{kx})' = k \cdot e^{kx}$)
+- (c) $h(x) = \ln(x^2 + 1)$ (Gợi ý: Chain Rule)
+
+**B2.** Cho $f(x, y) = x^2y + 3xy^2 - 5$. Tính:
+- (a) $\frac{\partial f}{\partial x}$ (giữ y cố định)
+- (b) $\frac{\partial f}{\partial y}$ (giữ x cố định)
+- (c) Gradient $\nabla f$ tại điểm $(1, 2)$
+
+**B3.** Thực hiện 3 bước GD tay cho $f(x) = (x-4)^2$, xuất phát từ $x_0 = 0$, learning rate $\alpha = 0.3$:
+- Tính $f'(x)$
+- Tính $x_1, x_2, x_3$
+- Giá trị đang tiến về đâu?
+
+**B4.** Chain Rule: Cho $h(x) = \sigma(2x+1)$ với $\sigma(t) = \frac{1}{1+e^{-t}}$ (hàm sigmoid). Tính $h'(x)$. (Gợi ý: $\sigma'(t) = \sigma(t)(1-\sigma(t))$)
+
+<details><summary>📝 Đáp án B</summary>
+
+**B1:**
+- (a) $f'(x) = 20x^3 - 6x + 2$
+- (b) $g'(x) = 2e^{2x}$ — Chain Rule: $(e^{kx})' = k \cdot e^{kx}$
+- (c) $h'(x) = \frac{2x}{x^2+1}$ — Chain Rule: $(\ln u)' = \frac{u'}{u}$
+
+**B2:**
+- (a) $\frac{\partial f}{\partial x} = 2xy + 3y^2$ (giữ y cố định, x² → 2x, y và y² là hằng số)
+- (b) $\frac{\partial f}{\partial y} = x^2 + 6xy$
+- (c) Tại (1,2): $\nabla f = (2×1×2 + 3×4, 1 + 6×1×2) = (4+12, 1+12) = \mathbf{(16, 13)}$
+
+**B3:**
+- $f'(x) = 2(x-4)$
+- $x_1 = 0 - 0.3 × 2(0-4) = 0 + 2.4 = \mathbf{2.4}$
+- $x_2 = 2.4 - 0.3 × 2(2.4-4) = 2.4 + 0.96 = \mathbf{3.36}$
+- $x_3 = 3.36 - 0.3 × 2(3.36-4) = 3.36 + 0.384 = \mathbf{3.744}$
+- Đang tiến dần về $x = 4$ (cực tiểu của $f$) ✅
+
+**B4:** $h'(x) = \sigma(2x+1)(1-\sigma(2x+1)) \times 2 = 2\sigma(2x+1)(1-\sigma(2x+1))$
+
+</details>
+
+---
+
+### 🔵 Mức C — Giải thích và so sánh
+
+**C1.** Giải thích tại sao Backpropagation trong neural network **là** Chain Rule. Cho mạng đơn giản 2 lớp: $\hat{y} = \sigma(W_2 \sigma(W_1 x))$. Viết công thức Chain Rule để tính $\frac{\partial L}{\partial W_1}$.
+
+**C2.** So sánh SGD, Momentum, Adam:
+- (a) SGD nhạy cảm với outlier như thế nào?
+- (b) Momentum giúp khắc phục nhược điểm gì của SGD?
+- (c) Tại sao Adam là "mặc định tốt nhất" nhưng SGD+Momentum lại cho generalization tốt hơn?
+
+**C3.** Hàm lồi (convex) quan trọng như thế nào trong tối ưu hóa? Liệt kê 3 loss function phổ biến trong ML và xác nhận chúng có lồi không. Neural network học có lồi không? Hệ quả là gì?
+
+**C4.** Vanishing gradient xảy ra khi nào? Tại sao ReLU giải quyết vấn đề này tốt hơn Sigmoid? Tại sao Batch Normalization cũng giúp?
+
+**C5.** Cho hàm loss $L(w) = \frac{1}{n}\sum (y_i - wx_i)^2$. Tính gradient $\frac{\partial L}{\partial w}$. Viết 1 bước GD cập nhật $w$. Giải thích: Khi gradient âm, $w$ tăng hay giảm?
+
+---
+
+### 🔴 Mức D — Ứng dụng thực tế (Code)
+
+**D1. GD từ đầu:**
+Cài đặt Gradient Descent (không dùng autograd) để tìm cực tiểu của $f(x,y) = (x-3)^2 + 2(y+1)^2 + xy$. So sánh 3 learning rate: 0.001, 0.1, 0.5. Vẽ contour plot với đường đi GD.
+
+**D2. Autograd Toy Model:**
+Cài 1 neural network 1 ẩn layer với PyTorch. Dùng backward() để tính gradient. Xác nhận: Gradient của Loss theo W₁ bằng gì? So sánh với công thức Chain Rule tính tay.
+
+**D3. So sánh Optimizer:**
+Dùng 1 bài toán hồi quy đơn giản (y = 2x + 1 + noise). So sánh SGD / SGD+Momentum / Adam trên 3 tiêu chí: (a) Tốc độ hội tụ, (b) Loss cuối cùng, (c) Độ nhạy với lr. Vẽ loss curve cho cả 3.
+
+**D4. Visualize Vanishing/Exploding Gradient:**
+Xây dựng mạng 10 lớp, activation Sigmoid. In ra norm của gradient ở mỗi lớp. Thay bằng ReLU → So sánh. Thêm Batch Norm → So sánh tiếp.
+
+---
+
+## 🆘 HỖ TRỢ NGƯỜI TỰ HỌC
+
+### 📚 Tài nguyên học tiếp
+
+| Nguồn | Nội dung | Khi nào dùng |
+|-------|---------|-------------|
+| **3Blue1Brown — Neural Networks** (YouTube) | Video trực quan về Gradient và Backprop | Xem sau Phần 2 |
+| **Andrej Karpathy — micrograd** (GitHub) | Autograd từ đầu bằng 100 dòng Python | Sau khi hiểu Chain Rule |
+| **fast.ai — Practical DL** | GD trong thực tế, Adam, LR finder | Sau Ch.5 |
+| **PyTorch Docs — autograd** | Tài liệu chính thức | Khi code |
+
+### 🗺️ Lộ trình ôn nếu bị hổng
+
+```
+Quên đạo hàm cơ bản?  → §1.1 "Leo núi sương mù" → Bài B1
+Không hiểu Chain Rule? → §1.2 + VÍ DỤ "h(x)=(2x+1)³" → Bài B4
+Quên GD?               → §2.1 "Viên bi lăn xuống" → Bài B3
+Không nhớ Adam?        → §3C.2 Bảng optimizer → C2
+```
+
+### ✅ Checklist tự đánh giá
+
+- [ ] Giải thích đạo hàm = "độ dốc" cho người không học toán
+- [ ] Tính tay: $(3x^2 - 5x + 1)'$ và $\partial f/\partial x$ cho $f(x,y) = x^2y$
+- [ ] Viết công thức GD và giải thích tại sao có dấu trừ
+- [ ] Phân biệt: SGD vs Mini-batch GD vs Adam
+- [ ] Giải thích: Vanishing gradient là gì và tại sao ReLU giúp
+- [ ] Viết code PyTorch: Tính loss → backward → optimizer.step
+- [ ] Trực quan hóa GD với 3 learning rate khác nhau
+
+> **6–7 ✅ → Sẵn sàng sang Chương 3.**
+> **4–5 ✅ → Xem lại 1–2 mục yếu.**
+> **< 4 ✅ → Làm lại Checkpoint trước khi tiếp tục.**
+
+---
+
+> 📖 **Chương tiếp theo:** [Chương 3: Xác suất Thống kê — Quy luật của sự Bất định](Chuong3_XacSuatThongKe.md)
+>
+> *"Làm sao Gmail biết email nào là Spam? Đó là nhờ Định lý Bayes — và bạn sẽ tự cài nó từ đầu trong chương này."*
+
 

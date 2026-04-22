@@ -1,6 +1,25 @@
 # CHƯƠNG 5: TƯ DUY HỆ THỐNG & CÔNG NGHỆ MỚI
 
+## 📋 Metadata Chương
+
+| Mục | Chi tiết |
+|-----|---------|
+| **Tên chương** | Chương 5: Tư duy Hệ thống & Công nghệ mới |
+| **Hook** | Bạn đã học 4 viên gạch. Chương này xây tòa nhà: nhìn thấy cách chúng hội tụ thành AI — từ Computer Vision đến Federated Learning đến Self-Attention. |
+| **Đối tượng** | Sinh viên đã qua Ch.1-4; người muốn hiểu AI hoạt động như thế nào từ nền tảng |
+| **Điều kiện tiên quyết** | **Bắt buộc:** Tất cả Chương 1–4. Chương này là "Tổng hợp luận" — không thể đọc cô lập. |
+| **Thời gian học** | ~45 phút (Track 🟢🟡) \| ~70 phút (Track 🔵) |
+| **Mục tiêu đầu ra** | Sau chương này, người học có thể: |
+| | • **Truy vết** từng thành phần của AI về đúng môn Toán đã học (Ch.1-4) |
+| | • **Giải thích** Convolution và tại sao nó là "nhân ma trận cục bộ" |
+| | • **Hiểu** Federated Learning: FedAvg = trung bình có trọng số |
+| | • **Phân tích** Overfitting/Underfitting và 3 vũ khí chống overfitting |
+| | • **Kết hợp** tư duy hệ thống: nhìn AI là hệ thống tích hợp, không phải hộp đen |
+
+---
+
 ## 📖 SYSTEMS THINKING & ADVANCED TOPICS
+
 
 > *"Bạn đã học 4 viên gạch: Đại số Tuyến tính, Giải tích, Xác suất, Toán Rời rạc. Bây giờ hãy xem cách chúng ghép lại thành TÒA NHÀ — Trí tuệ Nhân tạo."*
 
@@ -1167,5 +1186,127 @@ Sau toàn bộ giáo trình, bạn cần:
 ---
 
 > *"Toán học không phải là điều bạn NHỚ. Toán học là điều bạn HIỂU — và khi hiểu rồi, bạn sẽ không bao giờ quên."*
-> 
+>
 > — Triết lý của giáo trình "Toán học không rào cản"
+
+---
+
+## 📝 BÀI TẬP PHÂN TẦNG
+
+### 🟢 Mức A — Nhận biết
+
+**A1.** Trả lời không dùng công thức: Convolution trong CNN là phép toán ĐSTT nào đã học trong Chương 1?
+
+**A2.** Trong Federated Learning, dữ liệu bệnh nhân có được gửi đến server không? Cái gì được gửi thay thế?
+
+**A3.** Liệt kê 2 trong 3 vũ khí chống overfitting và giải thích ngắn gọn cơ chế của mỗi loại.
+
+**A4.** Trong sơ đồ "4 chương hội tụ trong AI": Chương nào xử lý "output = P(mèo) = 97.3%"?
+
+**A5.** Bias-Variance Tradeoff: Bias cao = underfitting hay overfitting? Variance cao = underfitting hay overfitting?
+
+<details><summary>📝 Đáp án A</summary>
+
+- A1: **Phép nhân ma trận** (tích vô hướng giữa kernel và vùng local của ảnh)
+- A2: Dữ liệu KHÔNG được gửi. Chỉ **gradient (hoặc weight update)** được gửi
+- A3: L1/L2 (phạt weight lớn), Dropout (ngắt ngẫu nhiên neuron khi train)
+- A4: **Chương 3** (Xác suất → Softmax → P(mèo))
+- A5: Bias cao = **underfitting**. Variance cao = **overfitting**
+
+</details>
+
+---
+
+### 🟡 Mức B — Tính toán cơ bản
+
+**B1.** Convolution thủ công: Cho ảnh 5×5 và kernel Sobel X (3×3). Tính output pixel tại vị trí (2,2) — trung tâm ảnh:
+
+```
+Ảnh (vùng 3×3 quanh (2,2)):   Kernel Sobel X:
+  10  20  30                    -1  0  +1
+  40  50  60                    -2  0  +2
+  70  80  90                    -1  0  +1
+```
+
+**B2.** FedAvg: 3 client với sizes n₁=100, n₂=200, n₃=300. Weight vectors đơn giản: w₁=1.0, w₂=2.0, w₃=3.0. Tính w_global = FedAvg.
+
+**B3.** Cho model dự đoán với MSE=0.5 trên training set và MSE=3.0 trên test set. Đây là underfitting, good fit, hay overfitting? Đề xuất giải pháp.
+
+**B4.** Dropout với p=0.3 (30% neuron bị tắt). Nếu layer có 100 neuron, trung bình bao nhiêu neuron hoạt động khi train? Khi inference (test)?
+
+<details><summary>📝 Đáp án B</summary>
+
+**B1:** Output(2,2) = (-1)×10 + 0×20 + 1×30 + (-2)×40 + 0×50 + 2×60 + (-1)×70 + 0×80 + 1×90
+= -10 + 0 + 30 - 80 + 0 + 120 - 70 + 0 + 90 = **80** (phát hiện cạnh dọc!)
+
+**B2:** n_total = 100+200+300 = 600
+w_global = (100/600)×1.0 + (200/600)×2.0 + (300/600)×3.0 = 0.167 + 0.667 + 1.5 = **2.333**
+
+**B3:** **Overfitting** — Train loss tốt (0.5) nhưng test loss tệ (3.0). Giải pháp: Thêm Regularization (L1/L2), Dropout, Early Stopping, hoặc thu thập thêm dữ liệu.
+
+**B4:** Train: 100×(1−0.3) = **70 neuron**. Inference: **100 neuron** (dropout tắt, dùng fully, nhưng scale weight × (1-p) để bù).
+
+</details>
+
+---
+
+### 🔵 Mức C — Giải thích và so sánh
+
+**C1.** Tại sao Convolution hiệu quả hơn Fully-Connected cho ảnh? So sánh số tham số: Ảnh 100×100 qua (a) Fully Connected → 1000 neuron; (b) Convolution với 10 kernel 3×3.
+
+**C2.** Federated Learning giải quyết bài toán quyền riêng tư như thế nào? Nó có hoàn toàn an toàn không? Nêu 1 attack vector tiềm năng (gradient inversion attack).
+
+**C3.** Dropout tắt neuron khi train nhưng không tắt khi test. Tại sao không tắt lúc test? Tại sao scale weight lúc inference?
+
+---
+
+### 🔴 Mức D — Ứng dụng thực tế (Code)
+
+**D1. Mini CNN từ đầu:**
+Cài đặt Convolutional Layer (không dùng PyTorch NN) với NumPy: Forward pass (convolution + ReLU + MaxPool). Áp dụng trên dataset X/O từ chương. So sánh với Fully Connected.
+
+**D2. Federated Learning với Non-IID data:**
+Mô phỏng 5 client với phân phối dữ liệu khác nhau (Non-IID). So sánh FedAvg với IID vs Non-IID. Vẽ loss curve và phân tích tại sao Non-IID khó hơn.
+
+**D3. Self-Attention (Transformer) mini:**
+Implement self-attention cho chuỗi ngắn (5 tokens, 8-dim embedding): Tính Q, K, V. Tính attention weights (softmax). Tính output. Visualize attention heatmap.
+
+---
+
+## 🆘 HỖ TRỢ NGƯỜI TỰ HỌC
+
+### 📚 Tài nguyên học tiếp
+
+| Nguồn | Nội dung | Khi nào dùng |
+|-------|---------|-------------|
+| **CS231n** (Stanford) | CNN chuyên sâu | Sau Phần 2 |
+| **Karpathy — makemore** (GitHub) | Transformer từ đầu | Sau Self-Attention |
+| **Papers With Code** | Paper + code mọi SOTA | Khi đọc research |
+| **fast.ai** | Deep Learning thực tế | Muốn build nhanh |
+
+### 🗺️ Lộ trình ôn nếu bị hổng
+
+```
+Không nhớ Convolution? → §2.1-2.2 + Code convolution_2d → Bài B1
+Không nhớ FedAvg?      → §3.2 sơ đồ + công thức FedAvg → Bài B2
+Không nhớ Overfitting? → §3B.1-3B.2 + Ví dụ "học vẹt" → Bài B3
+```
+
+### ✅ Checklist tự đánh giá
+
+- [ ] Truy vết: Trong CNN phân loại ảnh mèo/chó, mỗi phần dùng kiến thức Chương mấy?
+- [ ] Giải thích Convolution bằng phép nhân ma trận
+- [ ] Tính FedAvg tay cho 3 client
+- [ ] Phân biệt Overfitting vs Underfitting, chọn đúng giải pháp
+- [ ] Giải thích Dropout: tại sao train có, test không?
+
+> **4–5 ✅ → Sẵn sàng sang Chương 6.**
+> **2–3 ✅ → Xem lại 1–2 mục. Đây là chương tổng hợp, cần nền vững.**
+> **< 2 ✅ → Ôn lại Chương 1-4 trước.**
+
+---
+
+> 📖 **Chương tiếp theo:** [Chương 6: Tối ưu hóa Nâng cao](Chuong6_ToiUuNangCao.md)
+>
+> *"Khi Gradient Descent thông thường không đủ — các thuật toán tối ưu nâng cao sẽ giải quyết những bài toán mà AI thực sự gặp phải."*
+
