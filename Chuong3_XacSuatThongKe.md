@@ -356,10 +356,13 @@ $$f(x) = \frac{1}{\sigma\sqrt{2\pi}} \exp\left(-\frac{(x - \mu)^2}{2\sigma^2}\ri
 
 | Ví dụ | μ (trung bình) | σ (độ phân tán) |
 |-------|----------------|-----------------|
-| Chiều cao nam VN | 168 cm | 6 cm |
+| Chiều cao nam VN | 170 cm | 8 cm |
 | Điểm thi THPT | 5.0/10 | 1.5 |
 | Nhiệt độ Hà Nội tháng 7 | 32°C | 3°C |
 | Thời gian phản hồi server | 200ms | 50ms |
+| Sản lượng lúa (tạ/ha) | 65 | 8 |
+| Điểm trung bình lớp học | 6.5 | 1.8 |
+| Lượng mưa tháng 8 (mm) | 280 | 60 |
 
 **Quy tắc 68-95-99.7:**
 - 68% dữ liệu nằm trong $\mu \pm 1\sigma$ 
@@ -527,6 +530,28 @@ $$\rho_{XY} = \frac{Cov(X,Y)}{\sigma_X \cdot \sigma_Y} \in [-1, 1]$$
 
 > 💡 **Quy tắc vàng:** Mua các cổ phiếu có $\rho < 0$ với nhau → Khi 1 cái lỗ, cái kia lãi → Giảm rủi ro tổng thể!
 
+#### 🎯 Ví dụ giáo dục: Correlation điểm các môn 📚
+
+| Cặp môn | ρ | Ý nghĩa học tập |
+|---------|---|------------------|
+| Toán × Lý | +0.82 | Rất cao — Giỏi Toán thường giỏi Lý |
+| Toán × Văn | +0.25 | Thấp — Hai tư duy khác nhau |
+| Thể dục × Tin học | +0.10 | Gần như không liên quan |
+| Ngủ đủ × Điểm thi | +0.45 | Ngủ đủ → Não hoạt động tốt hơn! |
+
+→ Trong giáo dục, correlation giúp thầy cô phát hiện: học sinh yếu Toán thường cũng yếu Lý → cần can thiệp sớm cả 2 môn, không chỉ 1.
+
+#### 🎯 Ví dụ nông nghiệp: Tương quan giữa các yếu tố mùa vụ 🌾
+
+| Cặp yếu tố | ρ | Ý nghĩa |
+|-----------|---|--------|
+| Lượng mưa × Sản lượng lúa | +0.70 | Mưa đủ → Lúa tốt |
+| Nhiệt độ × Sâu bệnh | +0.55 | Nóng hơn → Nhiều sâu hơn |
+| Phân bón × Sản lượng | +0.60 | Nhiều phân → Năng suất cao (đến ngưỡng) |
+| Giá phân bón × Lợi nhuận | -0.45 | Phân đắt → Lợi nhuận giảm |
+
+→ Nông dân thông minh dùng correlation để quyết định: mùa nào bón phân nhiều, mùa nào tập trung tưới tiêu.
+
 ### 🟡 2B.3 Ma trận Covariance — Cầu nối với PCA
 
 Khi có nhiều biến, ta xây dựng **ma trận Covariance**:
@@ -608,7 +633,7 @@ print("   Tài chính: Đa dạng hóa = chọn CP có corr âm với nhau")
 >
 > <details><summary>📝 Đáp án</summary>
 >
-> 1. **Phân phối Chuẩn (Normal)** với μ ≈ 168cm (trung bình), σ ≈ 6cm (độ phân tán). 68% nam cao 162-174cm.
+> 1. **Phân phối Chuẩn (Normal)** với μ ≈ 170cm (trung bình), σ ≈ 8cm (độ phân tán). 68% nam cao 162-178cm.
 > 2. E[X] = (1+2+3+4+5+6)/6 = **3.5** — Tung xúc xắc rất nhiều lần, trung bình sẽ là 3.5!
 > 3. Y sẽ **giảm** (tương quan âm). Ví dụ: Giá dầu tăng → CP hàng không giảm.
 > 4. Cả hai đều do **mùa hè** (confounding variable). Correlation ≠ Causation!
@@ -681,6 +706,30 @@ $$P(\text{bệnh} | \text{dương}) = \frac{0.99 \times 0.01}{0.99 \times 0.01 +
 → Đây là lý do bác sĩ thường yêu cầu xét nghiệm lần 2.
 
 > ⚠️ **SAI LẦM PHỔ BIẾN:** Bỏ qua Prior (Base Rate Fallacy). Khi thấy bộ lọc chỉ sai 5%, ta hay nghĩ "chắc chắn đúng 95%!". Nhưng nếu sự kiện quá hiếm (như bệnh hiếm gặp 1%), thì 5% sai kia sẽ tạo ra số lượng "dương tính giả" áp đảo số ca bệnh thật! Luôn phải xét đến **tần suất ban đầu** (Prior).
+
+#### 🎯 Ví dụ thể thao: Bayes trong bóng đá ⚽
+
+Bạn muốn dự đoán "Đội A có thắng không?" dựa trên lịch sử:
+
+- $P(\text{thắng}) = 0.4$ (Prior: Đội A thắng 40% trận)
+- $P(\text{sân nhà} | \text{thắng}) = 0.7$ (Khi thắng, 70% là sân nhà)
+- $P(\text{sân nhà}) = 0.5$ (50% trận là sân nhà)
+
+$$P(\text{thắng} | \text{sân nhà}) = \frac{0.7 \times 0.4}{0.5} = 0.56$$
+
+→ Được đá sân nhà nâng xác suất thắng từ 40% lên 56%! Đây là cách các trang cá cược thể thao tính tỷ lệ kèo.
+
+#### 🎯 Ví dụ giáo dục: Bayes chẩn đoán học lực 📚
+
+Một học sinh bị điểm kém trong bài kiểm tra. Giáo viên tự hỏi: "Em này yếu thật hay chỉ hôm nay bị ốm?"
+
+- $P(\text{yếu thật}) = 0.2$ (20% học sinh trong lớp yếu)
+- $P(\text{điểm kém} | \text{yếu thật}) = 0.9$ (90% học sinh yếu sẽ bị điểm kém)
+- $P(\text{điểm kém}) = 0.35$ (35% bài kiểm tra bị điểm kém)
+
+$$P(\text{yếu thật} | \text{điểm kém}) = \frac{0.9 \times 0.2}{0.35} = 0.51$$
+
+→ Chỉ 51%! Nghĩa là gần một nửa số học sinh bị điểm kém KHÔNG phải yếu thật — có thể do áp lực, ốm, hoặc chưa quen dạng bài. Giáo viên cần thêm bằng chưng (bài kiểm tra lần 2) trước khi kết luận.
 
 ### 🔵 3.3 Code Python: Bộ lọc Spam Bayes
 
@@ -1390,6 +1439,28 @@ XÁC SUẤT THỐNG KÊ — QUY LUẬT CỦA SỰ BẤT ĐỊNH
     └── Ứng dụng: Thị giác máy tính
 ```
 
+### 💎 Nếu chỉ nhớ 1 điều từ chương này
+
+> **Mọi output của AI đều là xác suất — và Bayes là cách "cập nhật niềm tin" khi có dữ liệu mới.**
+>
+> Khi ChatGPT nói "97% là mèo", đó là xác suất softmax. Khi Gmail lọc spam, đó là Bayes. Khi bạn đánh giá model, bạn dùng phân phối chuẩn và confidence interval. Xác suất không phải đánh bạc — nó là ngôn ngữ để nói chuyện với sự bất định của thế giới thực.
+
+---
+
+### 🔗 Kiến thức này xuất hiện lại ở đâu?
+
+| Chương | Nội dung liên quan | Cần kiến thức gì từ Ch.3? |
+|--------|-------------------|--------------------------|
+| **Ch.5** Softmax Classification | Biến output thành xác suất | Phân phối, Xác suất |
+| **Ch.5** Cross-Entropy Loss | Loss function cho classification | Entropy, KL Divergence |
+| **Ch.5** Collaborative Filtering | Ma trận user-item xác suất | Conditional probability |
+| **Ch.7** Hypothesis Testing | Kiểm định giả thuyết | Phân phối chuẩn, p-value |
+| **Ch.7** Confidence Interval | Khoảng ước lượng | Phân phối chuẩn, σ |
+| **Ch.7** Logistic Regression | Output = xác suất | Bayes, Sigmoid |
+| **Ch.7** Markov Chain | Xác suất chuyển trạng thái | Conditional probability |
+
+---
+
 ### ✅ Checklist kiến thức
 
 - [ ] Giải thích xác suất bằng "100 vũ trụ song song"
@@ -1398,6 +1469,22 @@ XÁC SUẤT THỐNG KÊ — QUY LUẬT CỦA SỰ BẤT ĐỊNH
 - [ ] Hiểu tại sao Naive Bayes "naive" nhưng vẫn hiệu quả
 - [ ] Xây dựng Spam Filter từ đầu bằng Python
 - [ ] Giải thích và tính Accuracy, Precision, Recall, F1
+
+---
+
+## ❓ FAQ — Câu hỏi thường gặp
+
+**Q: Tại sao P(A|B) ≠ P(B|A)?**
+A: Vì "Xác suất bị ướt khi trời mưa" ≠ "Xác suất trời mưa khi bị ướt". Bạn có thể bị ướt vì nhiều lý do (té nước, vỡ ống nước). Bayes cho bạn công thức để chuyển đổi giữa hai phía.
+
+**Q: Khi nào dùng Bernoulli, khi nào dùng Binomial?**
+A: Bernoulli = 1 lần thử (tung 1 đồng xu). Binomial = n lần thử (tung 10 đồng xu, đếm số ngửa). Nếu bạn đếm "số lần thành công trong n lần", đó là Binomial.
+
+**Q: Cross-Entropy Loss nhỏ có nghĩa là model tốt?**
+A: Trên training data — có thể là overfitting! Luôn đánh giá trên test data. CE nhỏ trên test + train → tốt. CE nhỏ trên train, lớn trên test → overfitting.
+
+**Q: Correlation = 0 nghĩa là không liên quan?**
+A: Không liên quan **tuyến tính**. Hai biến có thể có mối quan hệ phi tuyến mạnh (ví dụ: Y = X²) nhưng correlation = 0. Dùng scatter plot để kiểm tra.
 
 ---
 
@@ -1414,6 +1501,19 @@ Xây dựng bộ phân loại tin nhắn: "Tích cực" vs "Tiêu cực" (Sentim
 
 ### Bài 4: A/B Testing ⭐⭐⭐
 Công ty có 2 giao diện web. Phiên bản A: 1000 khách, 50 click. Phiên bản B: 1000 khách, 65 click. Dùng kiểm định giả thuyết (hypothesis testing) để xác định: "Phiên bản B thực sự tốt hơn hay chỉ do may mắn?"
+
+---
+
+## ❌ SAI LẦM PHỔ BIẾN — ĐỪNG MẮC BẪY!
+
+| # | Sai lầm | Tại sao sai | Đúng phải nói |
+|---|---------|-------------|---------------|
+| 1 | "p-value = 0.03 nghĩa là 3% khả năng H₀ đúng" | p-value là XS dữ liệu **dưới giả định H₀**, không phải XS H₀ | "Nếu H₀ đúng, xác suất thấy dữ liệu ≥ extreme = 3%" |
+| 2 | "Correlation = 1 nghĩa là X gây ra Y" | Correlation ≠ Causation. Cả hai có thể do biến ẩn (confounding) | "X và Y tương quan, nhưng chưa chứng minh nhân quả" |
+| 3 | "Xét nghiệm 99% chính xác → dương tính nghĩa là 99% bị bệnh" | Bỏ qua Prior (Base Rate Fallacy). Nếu bệnh hiếm (1%), dương tính giả sẽ áp đảo | Luôn dùng Bayes: P(bệnh|dương) = P(dương|bệnh)×P(bệnh)/P(dương) |
+| 4 | "Phương sai lớn = xấu" | Phụ thuộc ngữ cảnh. Đầu tư: variance cao = rủi ro cao nhưng cũng lợi nhuận tiềm năng cao | Phương sai đo **mức phân tán**, không phải tốt/xấu |
+| 5 | "Naive Bayes sai vì giả sử độc lập" | Giả sử độc lập thường sai, nhưng NB vẫn hoạt động tốt trong thực tế (spam filter, phân loại) | "Naive" = giả sử đơn giản, nhưng kết quả vẫn hiệu quả |
+| 6 | "Chọn α = 0.05 là luôn đúng" | α phụ thuộc ngữ cảnh. Y tế (α = 0.01), vật lý (α = 5σ ≈ 0.0000003) | Chọn α dựa trên hậu quả của sai lầm loại I |
 
 ---
 

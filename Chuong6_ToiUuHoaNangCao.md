@@ -31,6 +31,20 @@
 
 ---
 
+## 🎯 Ví dụ đa lĩnh vực: Tối ưu hóa ở khắp nơi
+
+Trước khi đi vào chi tiết, hãy nhìn bức tranh lớn — tối ưu hóa có ràng buộc xuất hiện **mọi nơi** trong đời sống:
+
+| Ngành | Bài toán | Ràng buộc |
+|-------|---------|----------|
+| **📚 Giáo dục** | Phân bổ 24h ôn 5 môn thi để điểm TB cao nhất | Tổng thời gian = 24h, mỗi môn ≥ 2h |
+| **🏥 Y tế** | Phân bổ 100 liều thuốc cho 5 bệnh viện | Mỗi BV ≥ 10 liều, tổng = 100 |
+| **🌾 Nông nghiệp** | Tối ưu diện tích trồng 3 loại cây | Tổng đất = 10ha, nước tưới ≤ 50m³/ngày |
+| **💰 Tài chính** | Tối ưu lợi nhuận danh mục đầu tư | Rủi ro ≤ ngưỡng, tổng vốn = 1 tỷ |
+| **📱 Marketing** | Phân bổ ngân sách quảng cáo 3 kênh | Tổng budget = 50 triệu, mỗi kênh ≥ 5 triệu |
+
+---
+
 ## 🎬 CÂU CHUYỆN MỞ ĐẦU: Tại sao Gradient Descent chưa đủ?
 
 Bạn đã biết GD — "lăn bi xuống đồi trong sương mù". Nhưng trong thực tế:
@@ -1006,6 +1020,25 @@ TỐI ƯU HÓA NÂNG CAO — NGHỆ THUẬT TÌM ĐÍCH
     └── Ứng dụng: Training thực tế
 ```
 
+### 💎 Nếu chỉ nhớ 1 điều từ chương này
+
+> **Gradient Descent là la bàn. Jacobian + Hessian là bản đồ địa hình. Lagrange là luật giao thông.**
+>
+> Chương 2 dạy bạn "đi xuống đồi". Chương này dạy bạn "đi xuống đồi thông minh hơn": Jacobian cho biết backprop hoạt động ra sao. Hessian cảnh báo điểm yên ngựa. Taylor xấp xỉ hàm phức tạp. Lagrange xử lý ràng buộc. Và vanishing gradient giải thích tại sao không thể cứ "đắp thêm layer" mà mong model tốt hơn.
+
+---
+
+### 🔗 Kiến thức này xuất hiện lại ở đâu?
+
+| Chương | Nội dung liên quan | Cần kiến thức gì từ Ch.6? |
+|--------|-------------------|--------------------------|
+| **Ch.7** Logistic Regression | Tối ưu BCE bằng GD nâng cao | Jacobian, Chain Rule |
+| **Ch.7** Monte Carlo | SGD = Monte Carlo sampling | Gradient, Optimizer |
+| **Thực tế** Training lớn | Adam, LR scheduling, Gradient clipping | Tất cả Ch.6 |
+| **Paper** Bất kỳ paper ML nào | Ký hiệu ∇, H, J | Jacobian, Hessian, Taylor |
+
+---
+
 ### ✅ Checklist kiến thức
 
 - [ ] Hiểu Jacobian = ma trận đạo hàm cho hàm nhiều output
@@ -1015,6 +1048,22 @@ TỐI ƯU HÓA NÂNG CAO — NGHỆ THUẬT TÌM ĐÍCH
 - [ ] Giải thích tại sao mạng sâu gặp vanishing gradient
 - [ ] Biết ít nhất 3 giải pháp: ReLU, ResNet, BatchNorm
 - [ ] Chọn được LR scheduler phù hợp cho bài toán
+
+---
+
+## ❓ FAQ — Câu hỏi thường gặp
+
+**Q: Jacobian và Gradient khác nhau thế nào?**
+A: Gradient = Jacobian của hàm 1 output (f: Rⁿ → R). Jacobin tổng quát hơn — nó cho hàm nhiều output (f: Rⁿ → Rᵐ). Khi m=1, Jacobian = gradient.
+
+**Q: Tại sao không dùng Newton's Method thay cho GD?**
+A: Newton cần tính và nghịch đảo ma trận Hessian — kích thước n×n với n = số tham số. Model lớn có hàng triệu tham số → Hessian quá lớn để lưu và tính. Đó là lý do GD (và các biến thể như Adam) được ưa chuộng trong deep learning.
+
+**Q: Vanishing gradient có còn là vấn đề không?**
+A: Với kiến trúc hiện đại (Transformer, ResNet, LayerNorm) — ít hơn nhiều. Nhưng hiểu nó vẫn quan trọng để debug khi training không hội tụ, và để hiểu tại sao một số kiến trúc được thiết kế như vậy.
+
+**Q: Khi nào dùng Gradient Clipping?**
+A: Khi bạn thấy loss "nhảy" lên rất cao hoặc NaN. Thường gặp trong RNN/LSTM và khi training language model. Clip norm = 1.0 là giá trị khởi đầu tốt.
 
 ---
 

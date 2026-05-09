@@ -198,6 +198,26 @@ Dịch ngôn ngữ đời thường:
 
 → Đạo hàm bậc 1 = "tốc độ thay đổi". Đạo hàm bậc 2 = "tốc độ của tốc độ thay đổi".
 
+#### 🎯 Liên tưởng 3: Đạo hàm trong y tế — Tốc độ lây lan dịch bệnh 🏥
+
+Trong dịch tễ học, $I(t)$ = số người nhiễm bệnh tại thời điểm $t$:
+- $I'(t) > 0$: Dịch đang **lan rộng** (số ca nhiễm tăng mỗi ngày)
+- $I'(t) = 0$: Dịch **đạt đỉnh** (số ca mới = số ca khỏi)
+- $I'(t) < 0$: Dịch **đang giảm** (số ca mới ít hơn số ca khỏi)
+- $I''(t) < 0$: Tốc độ lây lan **đang chậm lại** (biện pháp giãn cách có hiệu quả!)
+
+→ Bộ Y tế dùng đạo hàm để quyết định khi nào nới lỏng cách xã hội: khi $I'(t) < 0$ và $I''(t) < 0$ liên tục 14 ngày.
+
+#### 🎯 Liên tưởng 4: Đạo hàm trong tài chính — Tốc độ thay đổi giá 📈
+
+Giá Bitcoin $P(t)$:
+- $P'(t) = +500\$/ngày$: Giá đang **tăng nhanh**
+- $P'(t) = -200\$/ngày$: Giá đang **giảm**
+- $P''(t) = 0$ (đường thẳng): Tốc độ tăng/giảm **ổn định**
+- $P''(t) < 0$ (đường cong xuống): Tốc độ tăng **đang chậm lại** → có thể sắp đảo chiều!
+
+→ Nhà đầu tư kỹ thuật (technical analysis) dùng đạo hàm bậc 1 (Moving Average) và bậc 2 (Acceleration) để ra quyết định mua/bán.
+
 ### 🟡 1.2 Các quy tắc đạo hàm cốt lõi
 
 Chỉ cần nhớ **4 quy tắc** là đủ cho 80% bài toán:
@@ -365,6 +385,22 @@ Nếu xe chạy đều 60 km/h trong 2 giờ: $\int_0^2 60 \, dt = 120$ km. Như
 Nếu tốc độ sản xuất tại thời điểm $t$ là $P(t) = 100 + 5t$ (triệu VNĐ/giờ), thì tổng sản lượng trong 8 giờ:
 
 $$\text{Tổng sản lượng} = \int_0^8 (100 + 5t) \, dt = [100t + 2.5t^2]_0^8 = 800 + 160 = 960 \text{ triệu}$$
+
+#### 🎯 Ví dụ nông nghiệp: Tổng lượng nước tưới tiêu 🌾
+
+Một hệ thống tưới tiêu tự động bơm nước với tốc độ thay đổi theo nhiệt độ: $Q(t) = 2 + 0.5t$ lít/phút (tăng dần vì trời nóng lên vào buổi trưa). Tổng lượng nước tưới trong 10 phút:
+
+$$\text{Tổng nước} = \int_0^{10} (2 + 0.5t) \, dt = [2t + 0.25t^2]_0^{10} = 20 + 25 = 45 \text{ lít}$$
+
+→ Nếu không có tích phân, bạn chỉ biết tốc độ bơm tại từng thời điểm. Tích phân cho biết **tổng lượng nước thực tế** — từ đó tính chi phí và kiểm soát tài nguyên.
+
+#### 🎯 Ví dụ giáo dục: Tổng kiến thức tích lũy 📚
+
+Tốc độ học (kiến thức mới/giờ) của một sinh viên: $r(t) = 10e^{-0.1t}$ (lúc đầu học nhanh, sau giảm dần vì mệt). Tổng kiến thức sau 5 giờ:
+
+$$\text{Tổng kiến thức} = \int_0^5 10e^{-0.1t} \, dt = [-100e^{-0.1t}]_0^5 = 100(1 - e^{-0.5}) \approx 39.3 \text{ đơn vị}$$
+
+→ Giải thích tại sao học 5 giờ liên tục không hiệu quả bằng 3 buổi 1.5 giờ: tốc độ học giảm theo hàm mũ, nên nghỉ giữa chừng giúp "reset" tốc độ!
 
 ### 1B.2 Tại sao cần tích phân trong ML?
 
@@ -1307,6 +1343,28 @@ GIẢI TÍCH — LA BÀN TỐI ƯU HÓA
     ├── Backprop = Chain Rule trên mạng neural
     └── Mini Project: Neural Network from scratch 🧠
 ```
+
+### 💎 Nếu chỉ nhớ 1 điều từ chương này
+
+> **Đạo hàm chỉ "hướng đi", Gradient Descent chỉ "bước chân".**
+>
+> Mọi mô hình AI đều học bằng cùng một quy trình: (1) Đo độ dốc sai số (đạo hàm), (2) Bước đi ngược hướng dốc đó (GD). Learning rate quyết định bước to hay nhỏ. Chain Rule là sợi dây xích nối các layer lại để gradient truyền ngược từ output về input (Backpropagation). Hiểu được 4 ý này, bạn hiểu 80% cách AI học.
+
+---
+
+### 🔗 Kiến thức này xuất hiện lại ở đâu?
+
+| Chương | Nội dung liên quan | Cần kiến thức gì từ Ch.2? |
+|--------|-------------------|--------------------------|
+| **Ch.3** Cross-Entropy Loss | Tối ưu hàm mất mát | Đạo hàm, GD |
+| **Ch.3** Linear Regression | Tìm w tối ưu bằng GD | Đạo hàm riêng, Gradient |
+| **Ch.5** Neural Network | Backpropagation toàn mạng | Chain Rule |
+| **Ch.5** Overfitting | Regularization = phạt đạo hàm lớn | Đạo hàm |
+| **Ch.6** Jacobian/Hessian | Đạo hàm bậc 1 & 2 cho hàm nhiều biến | Đạo hàm riêng, Gradient |
+| **Ch.6** Adam/RMSProp | Optimizer nâng cao | SGD, Momentum |
+| **Ch.7** Logistic Regression | Tối ưu BCE Loss bằng GD | Chain Rule, Đạo hàm |
+
+---
 
 ### ✅ Checklist kiến thức
 

@@ -135,6 +135,10 @@ Trong đó $V$ = tập đỉnh, $E$ = tập cạnh.
 | **Internet** | Trang web | Hyperlink |
 | **Não bộ** | Neuron | Synapse |
 | **Vũ trụ MCU** | Nhân vật | Cùng xuất hiện |
+| **🏥 Truy vết COVID** | Người bệnh | Tiếp xúc gần |
+| **📚 Tiên quyết môn** | Môn học | Môn A là tiên quyết của B |
+| **🌾 Chuỗi cung ứng** | Nông trại, Kho, Chợ | Đường vận chuyển |
+| **📈 Thị trường** | Công ty | Quan hệ cung-cầu |
 
 > 🌱 **VÍ DỤ VỠ LÒNG — Vẽ tay 1 đồ thị (30 giây)**
 >
@@ -1002,6 +1006,26 @@ TOÁN RỜI RẠC — CẤU TRÚC CỦA THẾ GIỚI SỐ
     └── Feature Selection trong ML
 ```
 
+### 💎 Nếu chỉ nhớ 1 điều từ chương này
+
+> **Thế giới số = Chấm và Đường nối.**
+>
+> Mọi thứ phức tạp trong CNTT — mạng xã hội, Internet, GPS, blockchain, thậm chí mạng neural — đều có thể biểu diễn bằng đồ thị G = (V, E). BFS tìm đường ngắn nhất theo số bước. Dijkstra tìm đường ngắn nhất theo trọng số. Big-O cho biết thuật toán nhanh hay chậm. Hiểu được đồ thị, bạn hiểu cấu trúc bên trong của mọi hệ thống số.
+
+---
+
+### 🔗 Kiến thức này xuất hiện lại ở đâu?
+
+| Chương | Nội dung liên quan | Cần kiến thức gì từ Ch.4? |
+|--------|-------------------|--------------------------|
+| **Ch.5** Neural Network Architecture | DAG = Directed Acyclic Graph | Đồ thị có hướng |
+| **Ch.5** PageRank | Duyệt đồ thị web | BFS/DFS, Ma trận kề |
+| **Ch.5** Federated Learning | Topology mạng | Đồ thị, Ma trận kề |
+| **Ch.6** Computation Graph | Backprop trên đồ thị | DAG, Đồ thị có hướng |
+| **Ch.7** Markov Chain | Graph xác suất chuyển trạng thái | Đồ thị có trọng số |
+
+---
+
 ### ✅ Checklist kiến thức
 
 - [ ] Biểu diễn bài toán thực tế bằng đồ thị
@@ -1009,6 +1033,22 @@ TOÁN RỜI RẠC — CẤU TRÚC CỦA THẾ GIỚI SỐ
 - [ ] Viết Dijkstra tìm đường ngắn nhất
 - [ ] Viết bảng chân trị và áp dụng logic vào if/else
 - [ ] Tính tổ hợp, chỉnh hợp và ứng dụng trong bảo mật
+
+---
+
+## ❓ FAQ — Câu hỏi thường gặp
+
+**Q: Khi nào dùng BFS, khi nào dùng DFS?**
+A: BFS = tìm đường ngắn nhất (theo số cạnh), duyệt theo tầng. DFS = khám phá sâu, kiểm tra chu trình, giải mê cung. Nếu cần "ngắn nhất" → BFS. Nếu cần "đi hết" → DFS.
+
+**Q: Dijkstra có hoạt động với cạnh âm không?**
+A: KHÔNG! Dijkstra giả định mọi trọng số ≥ 0. Nếu có cạnh âm, dùng Bellman-Ford thay thế.
+
+**Q: Big-O quan trọng đến mức nào trong phỏng vấn?**
+A: Rất quan trọng. Big-O cho biết code của bạn có "chạy nổi" khi dữ liệu lớn hay không. O(n²) với n=10⁶ = 10¹² phép tính → quá chậm. O(n log n) với n=10⁶ ≈ 2×10⁷ → chấp nhận được.
+
+**Q: Ma trận kề và danh sách kề — dùng cái nào?**
+A: Đồ thị đặc (nhiều cạnh) → Ma trận kề (truy cập O(1)). Đồ thị thưa (ít cạnh) → Danh sách kề (tiết kiệm bộ nhớ). Trong thực tế, hầu hết đồ thị thực tế đều thưa.
 
 ---
 
